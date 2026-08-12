@@ -293,22 +293,18 @@ button,textarea {
   font-weight:750
 }
 
-/* ===== Destaque de valor calculado (pill) ===== */
+/* ===== Destaque de valor calculado ===== */
 .calc {
-  display:inline-block;
   color:var(--blue);
-  background:var(--blue2);
-  padding:1px 7px;
-  border-radius:3px;
   font-variant-numeric:tabular-nums;
-  font-weight:750;
+  font-weight:700;
   white-space:nowrap
 }
 
 /* variação discreta para valor de entrada (não calculado) referenciado com @nome */
 .calc-input {
   color:var(--ink);
-  background:var(--code)
+  font-weight:700
 }
 
 /* ===== Declaração visível "@ nome = expr" (linha de dado/cálculo) =====
@@ -672,11 +668,11 @@ dialog::backdrop {
   max-width:none
 }
 
-.calc {
+  .calc {
   color:#000;
   background:none;
   padding:0
-}
+  }
 
 .dp-print-mark {
   display:block;
@@ -828,7 +824,7 @@ class CalcError extends Error{}
 // proteger {{ }} e aspas: extrai, marca, tokeniza o resto normalmente).
 class Parser{
   constructor(s,mode='number'){this.mode=mode;this.s=s;
-    if(mode==='date')this.s=this.s.replace(/\b(\d{1,2})\/(\d{1,2})\/(\d{2,4})\b/g,(m,d,mo,y)=>{y=y.length===2?'20'+y:y;let ds=+d,ms=+mo,ys=+y;if(ms<1||ms>12||ds<1||ds>31)throw new CalcError('data inválida: '+m);return '\u0002'+Math.floor(Date.UTC(ys,ms-1,ds)/86400000)+'\u0003'});
+    if(mode==='date')this.s=this.s.replace(/\b(\d{1,2})\/(\d{1,2})\/(\d{2,4})\b/g,(m,d,mo,y)=>{y=y.length===2?'20'+y:y;let ds=+d,ms=+mo,ys=+y;let check=new Date(Date.UTC(ys,ms-1,ds));if(ms<1||ms>12||ds<1||ds>31||check.getUTCFullYear()!==ys||check.getUTCMonth()!==ms-1||check.getUTCDate()!==ds)throw new CalcError('data inválida: '+m);return '\u0002'+Math.floor(check.getTime()/86400000)+'\u0003'});
     if(mode==='hour')this.s=this.s.replace(/\b(\d{1,3}):([0-5]\d)\b/g,(m,h,mi)=>'\u0004'+(+h*60+ +mi)+'\u0003');
     this.i=0;this.t=[];this.lex();this.p=0}
   lex(){while(this.i<this.s.length){let c=this.s[this.i];
@@ -857,7 +853,7 @@ class Engine{
     // sintaxe antiga "nome = expr" — mantida por compatibilidade, invisível
     let m=line.match(/^\s*([^=]+?)\s*=\s*(.*?)\s*;?\s*$/);
     if(!m){keep.push(line);return}
-    this.declare(m[1].trim(),m[2].trim(),lineNo,false,'number')});for(const [name,v] of this.vars)try{this.calc(name)}catch(e){this.issue(v.line,'“'+name+'”: '+e.message);this.vals.set(name,{error:e.message})}return keep}
+    let legacyExpr=m[2].trim(),legacyMode=/\b\d{1,2}\/\d{1,2}\/\d{2,4}\b/.test(legacyExpr)?'date':'number';this.declare(m[1].trim(),legacyExpr,lineNo,false,legacyMode)});for(const [name,v] of this.vars)try{this.calc(name)}catch(e){this.issue(v.line,'“'+name+'”: '+e.message);this.vals.set(name,{error:e.message})}return keep}
   // valida nome/expressão e registra a variável. mode define como literais são lidos dentro da expressão
   declare(name,expr,lineNo,visible,mode='number'){if(!/^[A-Za-z][A-Za-z0-9]*$/.test(name)){this.issue(lineNo,'nome inválido “'+name+'”: use camelCase, sem acentos, espaços ou símbolos');return}if(this.vars.has(name)){this.issue(lineNo,'variável duplicada: “'+name+'”');return}try{let ast=new Parser(expr,mode).parse();this.vars.set(name,{name,expr,ast,line:lineNo,visible,kind:ast.k==='n'?'input':'calc'})}catch(e){this.issue(lineNo,'“'+name+'”: '+e.message)}}
   calc(name,stack=[]){if(this.vals.has(name)){let r=this.vals.get(name);if(r.error)throw new CalcError(r.error);return r}if(!this.vars.has(name))throw new CalcError('variável não definida: “'+name+'”');if(stack.includes(name))throw new CalcError('dependência circular: '+stack.concat(name).join(' → '));let r=this.eval(this.vars.get(name).ast,stack.concat(name));this.vals.set(name,r);return r}
@@ -869,7 +865,7 @@ class Engine{
   // hora: "+"/"-" entre duas horas resulta em hora (soma sem limite de 24h); "*"/"/" com um número
   // converte a hora para decimal e o resultado vira número (ex: valorHora * horasExtras = dinheiro)
   opHour(o,a,b){if(o==='+'||o==='-'){if(a.type!=='hour'||b.type!=='hour')throw new CalcError('para somar ou subtrair hora, os dois valores precisam ser hora');return{v:o==='+'?a.v+b.v:a.v-b.v,p:false,type:'hour'}}if(o==='*'||o==='/'){if(a.type==='hour'&&b.type==='hour')throw new CalcError('não é possível multiplicar ou dividir hora por hora');let hv=(a.type==='hour'?a.v:b.v)/60,nv=a.type==='hour'?b.v:a.v,v;if(o==='*')v=hv*nv;else if(a.type==='hour'){if(nv===0)throw new CalcError('divisão por zero');v=hv/nv}else{if(hv===0)throw new CalcError('divisão por zero');v=nv/hv}if(!Number.isFinite(v))throw new CalcError('resultado numérico inválido');return{v,p:false,type:'number'}}throw new CalcError('em hora, use apenas + - * /')}
-  inline(s){return this.eval(new Parser(s).parse(),['{{ }}'])}
+  inline(s,mode=expressionMode(s)){return this.eval(new Parser(s,mode).parse(),['{{ }}'])}
   value(name){return this.vals.get(name)}
 }
 const engine=new Engine();
@@ -885,9 +881,10 @@ function showHour(min){let neg=min<0;min=Math.round(Math.abs(min));let h=Math.fl
 function showDate(serial){let dt=new Date(serial*86400000);return String(dt.getUTCDate()).padStart(2,'0')+'/'+String(dt.getUTCMonth()+1).padStart(2,'0')+'/'+dt.getUTCFullYear()}
 function result(r){if(!r||r.error)return'Erro';if(r.type==='hour')return showHour(r.v);if(r.type==='date')return showDate(r.v);return r.p?shown(r.v*100)+'%':shown(r.v)}
 function humanize(name){return name.replace(/([A-Z])/g,' $1').replace(/^./,c=>c.toUpperCase()).trim()}
+function expressionMode(s){if(/\b\d{1,2}\/\d{1,2}\/\d{2,4}\b/.test(s))return'date';let ids=String(s).match(/[A-Za-z][A-Za-z0-9]*/g)||[];for(const name of ids)if(engine.vars.has(name)){try{if(engine.calc(name).type==='date')return'date'}catch(_){}}return'number'}
 function inline(s){let parts=[];
-  // 1) "{{ expr }}" — sintaxe antiga, mantida por compatibilidade
-  let marked=String(s).replace(/{{\s*([^{}]+?)\s*}}|\[\s*([^\[\]]+?)\s*\]/g,(_,e1,e2)=>{let e=e1!==undefined?e1:e2;if(!e.trim())return e1!==undefined?'{{ }}':'[ ]';let key='\uE000'+parts.length+'\uE001';try{let r=engine.inline(e.trim());parts.push('<span class="calc">'+esc(result(r))+'</span>')}catch(x){parts.push('<span class="calc-error" title="'+esc(x.message)+'">Erro: '+esc(x.message)+'</span>')}return key});
+  // 1) "{{ expr }}" e "[ expr ]" — calcula números, horas e datas
+  let marked=String(s).replace(/{{\s*([^{}]+?)\s*}}|\[\s*([^\[\]]+?)\s*\]/g,(_,e1,e2)=>{let e=e1!==undefined?e1:e2;if(!e.trim())return e1!==undefined?'{{ }}':'[ ]';let key='\uE000'+parts.length+'\uE001';try{let r=engine.inline(e.trim(),expressionMode(e.trim()));parts.push('<span class="calc">'+esc(result(r))+'</span>')}catch(x){parts.push('<span class="calc-error" title="'+esc(x.message)+'">Erro: '+esc(x.message)+'</span>')}return key});
   // 2) 'texto' ou "texto" — protege o conteúdo de virar referência @nome
   marked=marked.replace(/(['"])([^'"]*)\1/g,(_,q,inner)=>{let key='\uE002'+parts.length+'\uE003';parts.push(q+esc(inner)+q);return key});
   // 3) "@nome" — nova sintaxe: só substitui se "nome" for uma variável já declarada
