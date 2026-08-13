@@ -694,7 +694,7 @@ dialog::backdrop {
 </head>
 <body>
 <header class="header"><div><h1>DocNum</h1><p>Documento com variáveis nomeadas e cálculos integrados</p></div><div class="stats"><span class="badge">Cálculo automático</span><span class="stat" id="vcount">0 variáveis</span><span class="stat" id="ecount">0 erros</span></div></header>
-<div class="toolbar"><small>Atalhos: <b>Ctrl + Espaço</b> variáveis · <b>F2</b> painel · <b>Ctrl + S</b> salvar · <b>Tab</b> indentação</small><div class="actions"><button class="button" id="helpBtn">Ajuda</button><button class="button" id="varsBtn">Variáveis (F2)</button><button class="button primary" id="saveBtn">Salvar .md</button><button class="button primary" id="printBtn">Imprimir / PDF</button></div></div>
+<div class="toolbar"><small>Atalhos: <b>Ctrl + Espaço</b> variáveis · <b>F2</b> painel · <b>Ctrl + S</b> salvar · <b>Ctrl + B/I</b> negrito/itálico · <b>Ctrl + D</b> duplicar linha · <b>Alt + ↑↓</b> mover linha · <b>|3x5 + Enter</b> tabela rápida</small><div class="actions"><button class="button" id="helpBtn">Ajuda</button><button class="button" id="varsBtn">Variáveis (F2)</button><button class="button primary" id="saveBtn">Salvar .md</button><button class="button primary" id="printBtn">Imprimir / PDF</button></div></div>
 <main class="app"><section class="pane editor" id="editorPane"><label class="label" for="input"><span>Editor</span><span>Markdown + cálculos</span></label><textarea id="input" spellcheck="false"># Rescisão contratual sem justa causa
 
 Este documento é um exemplo que usa todos os recursos do DocNum: variável de número, de hora e de data, operadores matemáticos, referência inline com `@nome`, cálculo direto com `[ ]`, sintaxe antiga com `{{ }}`, texto protegido entre aspas, tabela e formatação.
@@ -801,10 +801,13 @@ Trabalhou @horasTrabalhadas no dia @dataAdmissao.</pre><p><code>@nome</code> fun
 | Horas | @horasTrabalhadas |</pre><h3>Documentos antigos</h3><p>A sintaxe anterior continua funcionando:</p><pre>salarioBase = 3500
 valorHora = salarioBase / 220
 O valor da hora é {{ valorHora }}.</pre><p>Essas declarações (sem <code>@</code>/<code>:</code>/<code>#</code>) ficam invisíveis — só aparecem via <code>{{ }}</code> ou <code>[ ]</code>.</p><h3>7. Cálculo direto no texto, sem variável</h3><pre>O saldo é [100-50].
-A diferença de dias é [dataDemissao - dataAdmissao].</pre><p><code>[ ]</code> funciona igual a <code>{{ }}</code>: calcula qualquer expressão (números, variáveis já declaradas, hora ou data) direto no meio do texto, sem precisar declarar uma variável nova.</p><h3>Limitações conhecidas</h3><ul><li>Hora não trata virada de meia-noite (turno que começa num dia e termina no outro).</li><li>Um título de seção que por acaso siga o formato <code># nomeDaVariavel = valor</code> é interpretado como declaração de data, não como cabeçalho — evite esse padrão exato em títulos.</li></ul><h3>Regras e atalhos</h3><table><tr><th>Recurso</th><th>Como usar</th></tr><tr><td>Nome</td><td>camelCase, sem acentos, espaços ou símbolos.</td></tr><tr><td>Inserir variável</td><td>Ctrl + Espaço, setas e Enter.</td></tr><tr><td>Ver variáveis</td><td>F2 ou botão Variáveis.</td></tr><tr><td>Salvar</td><td>Ctrl + S ou botão Salvar .md.</td></tr><tr><td>Imprimir/PDF</td><td>Ctrl + P ou botão Imprimir / PDF.</td></tr><tr><td>Indentação</td><td>Tab insere dois espaços.</td></tr></table><footer><button class="button" id="closeHelp">Fechar</button></footer></div></dialog><div class="toast" id="toast"></div>
+A diferença de dias é [dataDemissao - dataAdmissao].</pre><p><code>[ ]</code> funciona igual a <code>{{ }}</code>: calcula qualquer expressão (números, variáveis já declaradas, hora ou data) direto no meio do texto, sem precisar declarar uma variável nova.</p><h3>Limitações conhecidas</h3><ul><li>Hora não trata virada de meia-noite (turno que começa num dia e termina no outro).</li><li>Um título de seção que por acaso siga o formato <code># nomeDaVariavel = valor</code> é interpretado como declaração de data, não como cabeçalho — evite esse padrão exato em títulos.</li></ul><h3>Regras e atalhos</h3><table><tr><th>Recurso</th><th>Como usar</th></tr><tr><td>Nome</td><td>camelCase, sem acentos, espaços ou símbolos.</td></tr><tr><td>Inserir variável</td><td>Ctrl + Espaço, setas e Enter.</td></tr><tr><td>Ver variáveis</td><td>F2 ou botão Variáveis.</td></tr><tr><td>Salvar</td><td>Ctrl + S ou botão Salvar .md.</td></tr><tr><td>Imprimir/PDF</td><td>Ctrl + P ou botão Imprimir / PDF.</td></tr><tr><td>Indentação</td><td>Tab insere dois espaços (em listas, indenta/desindenta o item).</td></tr><tr><td>Negrito / Itálico / Código</td><td>Ctrl + B / Ctrl + I / Ctrl + `, no texto selecionado.</td></tr><tr><td>Duplicar / mover linha</td><td>Ctrl + D duplica · Alt + ↑ / ↓ move a linha.</td></tr><tr><td>Fechamento automático</td><td>( [ { " ' ` fecham sozinhos ao digitar o abre-parênteses/aspas.</td></tr><tr><td>Tabela rápida</td><td>Digite <code>|3x5</code> e Enter numa linha em branco, ou use Ctrl + Alt + T. Tab na última célula cria nova linha.</td></tr></table><footer><button class="button" id="closeHelp">Fechar</button></footer></div></dialog><div class="toast" id="toast"></div>
 <script>
 'use strict';
 const $=id=>document.getElementById(id), input=$('input'), preview=$('preview'), picker=$('picker'), pickerList=$('pickerList'), vars=$('vars'), varsList=$('varsList'), toast=$('toast'), fmt=new Intl.NumberFormat('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+// pickerPrefix: texto a inserir ANTES do nome escolhido no seletor de variáveis.
+// "@" abre o seletor sem inserir o caractere no texto — só vira "@nome" se algo for escolhido.
+let pickerPrefix='';
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
 const number=s=>{let v=String(s);if(v.includes(','))v=v.replace(/\./g,'').replace(',','.');else if((v.match(/\./g)||[]).length>1)v=v.replace(/\./g,'');return Number(v)}, shown=x=>fmt.format(Object.is(x,-0)?0:x);
 // ===================================================================
@@ -911,20 +914,73 @@ function token(){let m=input.value.slice(0,input.selectionStart).match(/[A-Za-z]
 function caret(){let m=document.createElement('div'),style=getComputedStyle(input);m.style.cssText='position:absolute;visibility:hidden;white-space:pre-wrap;overflow-wrap:break-word;width:'+input.clientWidth+'px;font:'+style.font+';line-height:'+style.lineHeight+';padding:'+style.padding+';border:'+style.border+';';m.textContent=input.value.slice(0,input.selectionStart);let s=document.createElement('span');s.textContent='\u200b';m.append(s);document.body.append(m);let a=input.getBoundingClientRect(),b=m.getBoundingClientRect(),c=s.getBoundingClientRect(),p=$('editorPane').getBoundingClientRect();picker.style.left=Math.max(8,a.left+c.left-b.left-p.left)+'px';picker.style.top=Math.max(8,a.top+c.top-b.top-p.top+22)+'px';m.remove()}
 function renderPicker(){let t=token(),a=[...engine.vars.values()].filter(v=>v.name.toLowerCase().includes(t.filter));pickerList.innerHTML=a.length?a.map((v,i)=>'<button class="picker-item'+(i===0?' selected':'')+'" data-name="'+esc(v.name)+'"><span class="picker-name">'+esc(v.name)+'</span><span class="picker-value">'+esc(result(engine.value(v.name)))+'</span></button>').join(''):'<div class="picker-empty">Nenhuma variável encontrada.</div>';picker._items=a;picker._index=Math.min(picker._index||0,Math.max(0,a.length-1));picker.querySelectorAll('.picker-item').forEach((b,i)=>b.addEventListener('mousedown',e=>{e.preventDefault();insert(i)}));caret()}
 function openPicker(){picker.hidden=false;picker._index=0;renderPicker()}
-function closePicker(){picker.hidden=true;picker._items=[]}
-function insert(i){let v=picker._items?.[i];if(!v)return;let t=token();input.setRangeText(v.name,t.start,input.selectionStart,'end');closePicker();input.focus();render(input.value)}
+function closePicker(){picker.hidden=true;picker._items=[];pickerPrefix=''}
+function insert(i){let v=picker._items?.[i];if(!v)return;let t=token();input.setRangeText(pickerPrefix+v.name,t.start,input.selectionStart,'end');closePicker();input.focus();render(input.value)}
+// ===================================================================
+// Melhorias de digitação: formatação rápida, duplicar/mover linha,
+// fechamento automático de ( [ { " ' `, tabela rápida (|3x5 e Ctrl+Alt+T)
+// e Tab para nova linha na última célula de uma tabela.
+// ===================================================================
+function lineInfo(){let pos=input.selectionStart,val=input.value,ls=val.lastIndexOf('\n',pos-1)+1,le=val.indexOf('\n',pos);if(le===-1)le=val.length;return{val,pos,ls,le,line:val.slice(ls,le)}}
+function wrapMark(mark){let s=input.selectionStart,e=input.selectionEnd,sel=input.value.slice(s,e);input.setRangeText(mark+sel+mark,s,e,'end');if(sel){input.selectionStart=s+mark.length;input.selectionEnd=s+mark.length+sel.length}else{input.selectionStart=input.selectionEnd=s+mark.length}render(input.value)}
+function duplicateLine(){let{val,pos,ls,le,line}=lineInfo();input.setRangeText(line+'\n'+line,ls,le,'end');input.selectionStart=input.selectionEnd=le+1+(pos-ls);render(input.value)}
+function moveLine(dir){let{val,pos,ls,le,line:cur}=lineInfo();if(dir===-1){if(ls===0)return;let ps=val.lastIndexOf('\n',ls-2)+1,prev=val.slice(ps,ls-1);input.setRangeText(cur+'\n'+prev,ps,le,'end');input.selectionStart=input.selectionEnd=ps+(pos-ls)}else{if(le===val.length)return;let ne=val.indexOf('\n',le+1);if(ne===-1)ne=val.length;let next=val.slice(le+1,ne);input.setRangeText(next+'\n'+cur,ls,ne,'end');input.selectionStart=input.selectionEnd=ls+next.length+1+(pos-ls)}render(input.value)}
+// Monta o esqueleto de uma tabela markdown: "cols" colunas, "rows" linhas no total (cabeçalho + dados)
+function tableSkeleton(cols,rows){cols=Math.max(1,cols);rows=Math.max(2,rows);let head='| '+Array.from({length:cols},(_,i)=>'Coluna '+(i+1)).join(' | ')+' |',sep='|'+Array.from({length:cols},()=>' --- ').join('|')+'|',row='| '+Array.from({length:cols},()=>' ').join(' | ')+' |',body=Array.from({length:rows-1},()=>row).join('\n');return head+'\n'+sep+'\n'+body}
+function insertTable(cols,rows,start,end){let t=tableSkeleton(cols,rows);input.setRangeText(t,start,end,'end');input.selectionStart=input.selectionEnd=start+t.indexOf('\n',t.indexOf('\n')+1)+3;render(input.value)}
+function handleTab(shift){let{val,pos,ls,le,line}=lineInfo();
+  // dentro de lista (-, *, +, 1.): Tab indenta, Shift+Tab desindenta
+  if(/^\s*([-*+]|\d+\.)\s+/.test(line)){if(shift){let rm=line.match(/^ {1,2}/);if(!rm)return true;input.setRangeText('',ls,ls+rm[0].length,'end');input.selectionStart=input.selectionEnd=Math.max(ls,pos-rm[0].length)}else{input.setRangeText('  ',ls,ls,'end');input.selectionStart=input.selectionEnd=pos+2}render(input.value);return true}
+  // última célula da última linha de uma tabela: Tab cria uma nova linha, como no Word/Excel
+  if(!shift&&/^\s*\|.*\|\s*$/.test(line)&&!/^\s*\|?\s*:?-{3,}/.test(line)){let nextEnd=val.indexOf('\n',le+1);if(nextEnd===-1)nextEnd=val.length;let nextLine=val.slice(le+1,nextEnd),isLastRow=!/^\s*\|/.test(nextLine),pipes=[...line.matchAll(/\|/g)].map(x=>x.index),inLastCell=pipes.length>=2&&(pos-ls)>=pipes[pipes.length-2];if(isLastRow&&inLastCell){let cols=pipes.length-1,row='| '+Array.from({length:cols},()=>' ').join(' | ')+' |';input.setRangeText('\n'+row,le,le,'end');input.selectionStart=input.selectionEnd=le+3;render(input.value);return true}}
+  return false}
+function tryQuickTable(){if(!picker.hidden)return false;let{ls,le,line}=lineInfo(),m=line.trim().match(/^\|?\s*(\d{1,2})\s*[xX]\s*(\d{1,2})\s*\|?$/);if(!m)return false;let cols=Math.min(12,+m[1]),rows=Math.min(50,+m[2]);if(!cols||!rows)return false;insertTable(cols,rows,ls,le);return true}
+// Fechamento automático de pares — insere par vazio (ou envolve a seleção) e "atravessa" o
+// fechamento já existente em vez de duplicá-lo (comportamento padrão de editores de código)
+const AUTOCLOSE={'(':')','[':']','{':'}','"':'"',"'":"'",'`':'`'};
+function handleAutoclose(e){let key=e.key,s=input.selectionStart,e2=input.selectionEnd,val=input.value;
+  if(AUTOCLOSE[key]!==undefined){
+    if(s===e2&&(key==='"'||key==="'"||key==='`')&&val[s]===key){e.preventDefault();input.selectionStart=input.selectionEnd=s+1;return true}
+    if(s!==e2){let sel=val.slice(s,e2);e.preventDefault();input.setRangeText(key+sel+AUTOCLOSE[key],s,e2,'end');input.selectionStart=s+1;input.selectionEnd=s+1+sel.length;render(input.value);return true}
+    e.preventDefault();input.setRangeText(key+AUTOCLOSE[key],s,s,'end');input.selectionStart=input.selectionEnd=s+1;render(input.value);return true}
+  let closers={')':'(',']':'[','}':'{'};
+  if(closers[key]!==undefined&&s===e2&&val[s]===key){e.preventDefault();input.selectionStart=input.selectionEnd=s+1;return true}
+  return false}
 // Exporta o conteúdo do editor como arquivo .md
 function save(){let a=document.createElement('a'),url=URL.createObjectURL(new Blob([input.value],{type:'text/markdown;charset=utf-8'}));a.href=url;a.download='documento-dpcalc.md';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),0);toast.textContent='Documento salvo como documento-dpcalc.md.';toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2600)}
 // Abre o seletor sozinho ao digitar "@" (referência) ou "=" (declaração/expressão);
 // continua filtrando enquanto o nome é digitado ou apagado, e fecha quando o
 // caractere digitado não pode mais fazer parte de um nome de variável.
 input.addEventListener('input',e=>{render(input.value);let d=e.data;
-  if(d==='@'||d==='='){openPicker();return}
+  if(d==='='){pickerPrefix='';openPicker();return}
   if(picker.hidden)return;
   if(e.inputType==='deleteContentBackward'||e.inputType==='deleteContentForward')return;
   if(d&&/[A-Za-z0-9]/.test(d))return;
   closePicker()});
-input.addEventListener('keydown',e=>{let cmd=e.ctrlKey||e.metaKey;if(cmd&&e.code==='Space'){e.preventDefault();openPicker();return}if(cmd&&e.code==='KeyS'){e.preventDefault();save();return}if(cmd&&e.code==='KeyP'){e.preventDefault();print();return}if(e.key==='F2'){e.preventDefault();vars.hidden=!vars.hidden;if(!vars.hidden)renderVars();return}if(e.key==='Tab'){e.preventDefault();input.setRangeText('  ',input.selectionStart,input.selectionEnd,'end');render(input.value);return}if(picker.hidden)return;if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();let n=picker._items.length;picker._index=(picker._index+(e.key==='ArrowDown'?1:-1)+n)%n;picker.querySelectorAll('.picker-item').forEach((x,i)=>x.classList.toggle('selected',i===picker._index));return}if(e.key==='Enter'){e.preventDefault();insert(picker._index)}if(e.key==='Escape'){e.preventDefault();closePicker()}});input.addEventListener('blur',()=>setTimeout(()=>{if(!picker.matches(':hover'))closePicker()},150));$('varsBtn').onclick=()=>{vars.hidden=!vars.hidden;if(!vars.hidden)renderVars()};$('closeVars').onclick=()=>vars.hidden=true;$('saveBtn').onclick=save;$('printBtn').onclick=()=>print();$('helpBtn').onclick=()=>{let d=$('help');d.showModal?d.showModal():d.setAttribute('open','')};$('closeHelp').onclick=()=>$('help').close?.();window.addEventListener('resize',()=>{if(!picker.hidden)caret()});
+input.addEventListener('keydown',e=>{let cmd=e.ctrlKey||e.metaKey;
+  // formatação e edição de linha
+  if(cmd&&!e.altKey&&!e.shiftKey&&e.code==='KeyB'){e.preventDefault();wrapMark('**');return}
+  if(cmd&&!e.altKey&&!e.shiftKey&&e.code==='KeyI'){e.preventDefault();wrapMark('*');return}
+  if(cmd&&!e.altKey&&e.key==='`'){e.preventDefault();wrapMark('`');return}
+  if(cmd&&!e.altKey&&!e.shiftKey&&e.code==='KeyD'){e.preventDefault();duplicateLine();return}
+  if(e.altKey&&(e.code==='ArrowUp'||e.code==='ArrowDown')){e.preventDefault();moveLine(e.code==='ArrowUp'?-1:1);return}
+  // tabela rápida por atalho de tecla
+  if(cmd&&e.altKey&&e.code==='KeyT'){e.preventDefault();let a=prompt('Tabela: colunas x linhas (ex.: 3x5)','3x3');if(a){let m=a.trim().match(/^(\d{1,2})\s*[xX]\s*(\d{1,2})$/);if(m){let{ls,le}=lineInfo();insertTable(Math.min(12,+m[1]),Math.min(50,+m[2]),ls,le)}else alert('Formato inválido. Use, por exemplo, 3x5.')}return}
+  if(cmd&&e.code==='Space'){e.preventDefault();pickerPrefix='';openPicker();return}
+  if(cmd&&e.code==='KeyS'){e.preventDefault();save();return}
+  if(cmd&&e.code==='KeyP'){e.preventDefault();print();return}
+  if(e.key==='F2'){e.preventDefault();vars.hidden=!vars.hidden;if(!vars.hidden)renderVars();return}
+  // "@" abre o seletor sem inserir o caractere — só vira texto se uma variável for escolhida;
+  // se cancelado (Esc), não sobra "@" solto no documento
+  if(!cmd&&!e.altKey&&e.key==='@'&&picker.hidden&&input.selectionStart===input.selectionEnd){e.preventDefault();pickerPrefix='@';openPicker();return}
+  // "|3x5" + Enter numa linha em branco monta o esqueleto da tabela
+  if(e.key==='Enter'&&picker.hidden&&tryQuickTable()){e.preventDefault();return}
+  if(e.key==='Tab'){e.preventDefault();if(handleTab(e.shiftKey))return;if(e.shiftKey){let{ls,line}=lineInfo(),rm=line.match(/^ {1,2}/);if(rm)input.setRangeText('',ls,ls+rm[0].length,'end')}else input.setRangeText('  ',input.selectionStart,input.selectionEnd,'end');render(input.value);return}
+  if(!cmd&&!e.altKey&&handleAutoclose(e))return;
+  if(picker.hidden)return;
+  if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();let n=picker._items.length;picker._index=(picker._index+(e.key==='ArrowDown'?1:-1)+n)%n;picker.querySelectorAll('.picker-item').forEach((x,i)=>x.classList.toggle('selected',i===picker._index));return}
+  if(e.key==='Enter'){e.preventDefault();insert(picker._index)}
+  if(e.key==='Escape'){e.preventDefault();closePicker()}});input.addEventListener('blur',()=>setTimeout(()=>{if(!picker.matches(':hover'))closePicker()},150));$('varsBtn').onclick=()=>{vars.hidden=!vars.hidden;if(!vars.hidden)renderVars()};$('closeVars').onclick=()=>vars.hidden=true;$('saveBtn').onclick=save;$('printBtn').onclick=()=>print();$('helpBtn').onclick=()=>{let d=$('help');d.showModal?d.showModal():d.setAttribute('open','')};$('closeHelp').onclick=()=>$('help').close?.();window.addEventListener('resize',()=>{if(!picker.hidden)caret()});
 // Scroll sincronizado: acompanha por proporção (o conteúdo de cada lado tem altura diferente)
 (function(){let previewPane=$('previewPane'),sync=null,ratio=el=>{let d=el.scrollHeight-el.clientHeight;return d>0?el.scrollTop/d:0},apply=(el,r)=>{let d=el.scrollHeight-el.clientHeight;if(d>0)el.scrollTop=r*d};
   input.addEventListener('scroll',()=>{if(sync)return;sync='input';apply(previewPane,ratio(input));requestAnimationFrame(()=>sync=null)});
