@@ -1,15 +1,9 @@
-<!--
-  DocNum — editor de documentos DP com variáveis e cálculos inline
-  Autor: João Miguel E. Ferreira (DPeople) · contato.dpeople@gmail.com
-  Licença: MIT
-  100% offline, HTML+CSS+JS puro, sem dependências externas.
--->
 <!doctype html>
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>DP DocNum v0.11</title>
+<title>DP DocNum v0.12</title>
 <style>
 /* ===== Tokens de cor DPeople ===== */
 :root {
@@ -26,14 +20,8 @@
   --shadow:0 12px 32px #0f172a1f
 }
 
-* {
-  box-sizing:border-box
-}
-
-html,body {
-  height:100%;
-  margin:0
-}
+* { box-sizing:border-box }
+html,body { height:100%; margin:0 }
 
 body {
   display:flex;
@@ -44,9 +32,7 @@ body {
   font:14px/1.6 "Segoe UI","Libre Franklin",sans-serif
 }
 
-button,textarea {
-  font:inherit
-}
+button,textarea { font:inherit }
 
 /* ===== Cabeçalho e barra de ferramentas ===== */
 .header,.toolbar {
@@ -58,21 +44,9 @@ button,textarea {
   border-bottom:1px solid var(--line)
 }
 
-.header {
-  min-height:62px;
-  padding:10px 20px
-}
-
-.header h1 {
-  margin:0;
-  font-size:18px
-}
-
-.header p {
-  margin:2px 0 0;
-  color:var(--muted);
-  font-size:12px
-}
+.header { min-height:62px; padding:10px 20px }
+.header h1 { margin:0; font-size:18px }
+.header p { margin:2px 0 0; color:var(--muted); font-size:12px }
 
 .actions,.stats {
   display:flex;
@@ -99,84 +73,28 @@ button,textarea {
   outline:0
 }
 
-.button:focus-visible,
-.vars-close:focus-visible,
-.picker-item:focus-visible {
+.button:focus-visible, .vars-close:focus-visible, .picker-item:focus-visible {
   box-shadow:0 0 0 3px #1f4e7930;
   outline:2px solid var(--blue);
   outline-offset:1px
 }
 
-.button.primary {
-  border-color:var(--blue);
-  background:var(--blue);
-  color:#fff
-}
+.button.primary { border-color:var(--blue); background:var(--blue); color:#fff }
+.button.primary:hover,.button.primary:focus-visible { border-color:#163a5b; background:#163a5b; color:#fff }
 
-.button.primary:hover,.button.primary:focus-visible {
-  border-color:#163a5b;
-  background:#163a5b;
-  color:#fff
-}
+.badge,.stat { padding:4px 8px; border-radius:999px; font-size:11px; font-weight:700; white-space:nowrap }
+.badge { color:var(--blue); background:var(--blue2) }
+.stat { color:var(--muted); background:var(--code) }
+.stat.error { color:var(--red); background:var(--redbg) }
 
-.badge,.stat {
-  padding:4px 8px;
-  border-radius:999px;
-  font-size:11px;
-  font-weight:700;
-  white-space:nowrap
-}
+.toolbar { position:relative; z-index:5; padding:7px 20px; background:var(--paper) }
+.toolbar small { color:var(--muted) }
 
-.badge {
-  color:var(--blue);
-  background:var(--blue2)
-}
-
-.stat {
-  color:var(--muted);
-  background:var(--code)
-}
-
-.stat.error {
-  color:var(--red);
-  background:var(--redbg)
-}
-
-.toolbar {
-  position:relative;
-  z-index:5;
-  padding:7px 20px;
-  background:var(--paper)
-}
-
-.toolbar small {
-  color:var(--muted)
-}
-
-/* ===== Layout principal (editor + preview) ===== */
-.app {
-  display:flex;
-  flex:1;
-  min-height:0;
-  overflow:hidden
-}
-
-.pane {
-  position:relative;
-  width:50%;
-  min-width:0;
-  overflow:auto;
-  background:var(--paper)
-}
-
-.editor {
-  padding:16px;
-  border-right:1px solid var(--line)
-}
-
-.preview {
-  padding:28px clamp(18px,4vw,54px)
-}
+/* ===== Layout principal ===== */
+.app { display:flex; flex:1; min-height:0; overflow:hidden }
+.pane { position:relative; width:50%; min-width:0; overflow:auto; background:var(--paper) }
+.editor { padding:16px; border-right:1px solid var(--line) }
+.preview { padding:28px clamp(18px,4vw,54px) }
 
 .label {
   display:flex;
@@ -205,634 +123,272 @@ button,textarea {
   tab-size:2
 }
 
-.editor textarea:focus {
-  border-color:var(--blue);
-  box-shadow:0 0 0 3px #1f4e791f
-}
+.editor textarea:focus { border-color:var(--blue); box-shadow:0 0 0 3px #1f4e791f }
+.document { max-width:860px; margin:auto }
 
-.document {
-  max-width:860px;
-  margin:auto
-}
+/* ===== Tipografia ===== */
+.document h1,.document h2,.document h3 { line-height:1.25; color:var(--ink) }
+.document h1 { margin:0 0 20px; padding-bottom:10px; border-bottom:2px solid var(--line); font-size:clamp(24px,3vw,34px) }
+.document h2 { margin:24px 0 10px; font-size:24px }
+.document h3 { margin:20px 0 8px; font-size:19px }
+.document p { margin:0 0 16px }
+.document ul,.document ol { margin:0 0 16px; padding-left:24px }
+.document blockquote { margin:16px 0; padding:8px 14px; border-left:4px solid var(--blue); color:var(--muted); background:var(--blue2) }
+.document code { padding:2px 4px; border-radius:4px; background:var(--code); font-family:monospace }
+.document pre { overflow:auto; padding:14px; border-radius:8px; background:#1F2A33; color:var(--code) }
+.document pre code { padding:0; background:transparent }
+.document table { width:100%; margin:0 0 20px; border-collapse:collapse }
+.document th,.document td { padding:8px 10px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top }
+.document th { background:var(--code); font-weight:750 }
 
-/* ===== Tipografia do documento renderizado ===== */
-.document h1,.document h2,.document h3 {
-  line-height:1.25;
-  color:var(--ink)
-}
+/* ===== Destaques de cálculo ===== */
+.calc { color:var(--blue); font-variant-numeric:tabular-nums; font-weight:700; white-space:nowrap }
+.calc-input { color:var(--ink); font-weight:700 }
 
-.document h1 {
-  margin:0 0 20px;
-  padding-bottom:10px;
-  border-bottom:2px solid var(--line);
-  font-size:clamp(24px,3vw,34px)
-}
+.dp-fields { margin:0 0 16px; border:1px solid var(--line); border-radius:8px; overflow:hidden }
+.dp-field { display:flex; justify-content:space-between; gap:16px; padding:6px 12px; border-bottom:1px dotted var(--line); font-variant-numeric:tabular-nums }
+.dp-field:last-child { border-bottom:0 }
+.dp-field-label { flex:1; color:var(--muted) }
+.dp-field-value { text-align:right; font-weight:750 }
+.dp-field-calc .dp-field-value { color:var(--blue) }
+.dp-field-error .dp-field-value { color:var(--red) }
 
-.document h2 {
-  margin:24px 0 10px;
-  font-size:24px
-}
+.dp-app-footer { padding:6px 20px; text-align:right; font-size:9px; color:var(--muted); background:var(--paper); border-top:1px solid var(--line) }
+.dp-print-mark { display:none }
 
-.document h3 {
-  margin:20px 0 8px;
-  font-size:19px
-}
+/* ===== Erros ===== */
+.calc-error,.errors { color:var(--red); background:var(--redbg) }
+.calc-error { padding:2px 5px; border-radius:4px; font-size:.9em; font-weight:700 }
+.errors { margin:0 0 18px; padding:10px 12px; border-left:4px solid var(--red); font-size:12px }
+.errors strong { display:block; margin-bottom:3px }
+.errors ul { margin:0; padding-left:18px }
+.empty { padding:30px; color:var(--muted); text-align:center }
 
-.document p {
-  margin:0 0 16px
-}
-
-.document ul,.document ol {
-  margin:0 0 16px;
-  padding-left:24px
-}
-
-.document blockquote {
-  margin:16px 0;
-  padding:8px 14px;
-  border-left:4px solid var(--blue);
-  color:var(--muted);
-  background:var(--blue2)
-}
-
-.document code {
-  padding:2px 4px;
-  border-radius:4px;
-  background:var(--code);
-  font-family:monospace
-}
-
-.document pre {
-  overflow:auto;
-  padding:14px;
-  border-radius:8px;
-  background:#1F2A33;
-  color:var(--code)
-}
-
-.document pre code {
-  padding:0;
-  background:transparent
-}
-
-.document table {
-  width:100%;
-  margin:0 0 20px;
-  border-collapse:collapse
-}
-
-.document th,.document td {
-  padding:8px 10px;
-  border-bottom:1px solid var(--line);
-  text-align:left;
-  vertical-align:top
-}
-
-.document th {
-  background:var(--code);
-  font-weight:750
-}
-
-/* ===== Destaque de valor calculado ===== */
-.calc {
-  color:var(--blue);
-  font-variant-numeric:tabular-nums;
-  font-weight:700;
-  white-space:nowrap
-}
-
-/* variação discreta para valor de entrada (não calculado) referenciado com @nome */
-.calc-input {
-  color:var(--ink);
-  font-weight:700
-}
-
-/* ===== Declaração visível "@ nome = expr" (linha de dado/cálculo) =====
-   Linhas consecutivas são agrupadas num único bloco (.dp-fields), com
-   moldura própria e margem inferior — assim não grudam no texto seguinte
-   nem parecem uma tabela solta no meio do documento. */
-.dp-fields {
-  margin:0 0 16px;
-  border:1px solid var(--line);
-  border-radius:8px;
-  overflow:hidden
-}
-.dp-field {
-  display:flex;
-  justify-content:space-between;
-  gap:16px;
-  padding:6px 12px;
-  border-bottom:1px dotted var(--line);
-  font-variant-numeric:tabular-nums
-}
-.dp-field:last-child {
-  border-bottom:0
-}
-.dp-field-label {
-  flex:1;
-  color:var(--muted)
-}
-
-.dp-field-value {
-  text-align:right
-}
-.dp-field-value {
-  font-weight:750
-}
-.dp-field-calc .dp-field-value {
-  color:var(--blue)
-}
-.dp-field-error .dp-field-value {
-  color:var(--red)
-}
-
-/* ===== Rodapé e marca DPeople ===== */
-.dp-app-footer {
-  padding:6px 20px;
-  text-align:right;
-  font-size:9px;
-  color:var(--muted);
-  background:var(--paper);
-  border-top:1px solid var(--line)
-}
-
-.dp-print-mark {
-  display:none
-}
-
-/* ===== Erros de cálculo ===== */
-.calc-error,.errors {
-  color:var(--red);
-  background:var(--redbg)
-}
-
-.calc-error {
-  padding:2px 5px;
-  border-radius:4px;
-  font-size:.9em;
-  font-weight:700
-}
-
-.errors {
-  margin:0 0 18px;
-  padding:10px 12px;
-  border-left:4px solid var(--red);
-  font-size:12px
-}
-
-.errors strong {
-  display:block;
-  margin-bottom:3px
-}
-
-.errors ul {
-  margin:0;
-  padding-left:18px
-}
-
-.empty {
-  padding:30px;
-  color:var(--muted);
-  text-align:center
-}
-
-/* ===== Seletor de variáveis (Ctrl+Espaço) ===== */
+/* ===== Seletor e Painel ===== */
 .picker {
-  position:absolute;
-  z-index:10;
+  position:absolute; z-index:10;
   width:min(360px,calc(100% - 32px));
-  max-height:250px;
-  overflow:auto;
-  border:1px solid var(--line);
-  border-radius:8px;
-  background:var(--paper);
-  box-shadow:var(--shadow)
+  max-height:250px; overflow:auto;
+  border:1px solid var(--line); border-radius:8px;
+  background:var(--paper); box-shadow:var(--shadow)
 }
-
-.picker[hidden],.vars[hidden] {
-  display:none
-}
-
-.picker-head,.vars-head {
-  padding:8px 10px;
-  border-bottom:1px solid var(--line);
-  color:var(--muted);
-  font-size:11px;
-  font-weight:750
-}
-
+.picker[hidden],.vars[hidden] { display:none }
+.picker-head,.vars-head { padding:8px 10px; border-bottom:1px solid var(--line); color:var(--muted); font-size:11px; font-weight:750 }
 .picker-item {
-  display:flex;
-  justify-content:space-between;
-  gap:12px;
-  width:100%;
-  padding:8px 10px;
-  border:0;
+  display:flex; justify-content:space-between; gap:12px;
+  width:100%; padding:8px 10px; border:0;
   border-bottom:1px solid var(--code);
-  background:transparent;
-  text-align:left
+  background:transparent; text-align:left
 }
+.picker-item:hover,.picker-item.selected { color:var(--blue); background:var(--blue2) }
+.picker-name { font:700 12px monospace }
+.picker-value { color:var(--muted); font-size:11px }
+.picker-empty,.vars-empty { padding:10px; color:var(--muted); font-size:12px }
 
-.picker-item:hover,.picker-item.selected {
-  color:var(--blue);
-  background:var(--blue2)
-}
-
-.picker-name {
-  font:700 12px monospace
-}
-
-.picker-value {
-  color:var(--muted);
-  font-size:11px
-}
-
-.picker-empty,.vars-empty {
-  padding:10px;
-  color:var(--muted);
-  font-size:12px
-}
-
-/* ===== Painel de variáveis (F2) ===== */
 .vars {
-  position:absolute;
-  z-index:8;
-  top:16px;
-  right:16px;
+  position:absolute; z-index:8; top:16px; right:16px;
   width:min(360px,calc(100% - 32px));
-  max-height:calc(100% - 32px);
-  overflow:hidden;
-  border:1px solid var(--line);
-  border-radius:8px;
-  background:var(--paper);
-  box-shadow:var(--shadow)
+  max-height:calc(100% - 32px); overflow:hidden;
+  border:1px solid var(--line); border-radius:8px;
+  background:var(--paper); box-shadow:var(--shadow)
 }
+.vars-head { display:flex; justify-content:space-between; align-items:center }
+.vars-close { cursor:pointer; border:0; border-radius:5px; background:transparent; color:var(--muted); font-size:18px; line-height:1 }
+.vars-list { max-height:calc(100vh - 180px); overflow:auto; padding:0 10px }
+.var { padding:9px 0; border-bottom:1px solid var(--line) }
+.var:last-child { border-bottom:0 }
+.var-name { color:var(--blue); font:700 12px monospace }
+.var-expr { margin-top:2px; color:var(--muted); font:11px monospace; overflow-wrap:anywhere }
+.var-value { margin-top:3px; font-size:13px; font-weight:750 }
+.var-value.bad { color:var(--red) }
 
-.vars-head {
-  display:flex;
-  justify-content:space-between;
-  align-items:center
-}
+/* ===== Utils ===== */
+.toast { position:fixed; z-index:40; right:20px; bottom:20px; display:none; padding:9px 13px; border-radius:7px; background:var(--blue); color:#fff; box-shadow:var(--shadow); font-size:12px }
+.toast.show { display:block }
 
-.vars-close {
-  cursor:pointer;
-  border:0;
-  border-radius:5px;
-  background:transparent;
-  color:var(--muted);
-  font-size:18px;
-  line-height:1
-}
+dialog { width:min(680px,calc(100% - 32px)); padding:0; border:1px solid var(--line); border-radius:10px; box-shadow:var(--shadow); color:var(--ink) }
+dialog::backdrop { background:#141C2466 }
+.help { padding:20px 22px }
+.help h2 { margin:0 0 4px; font-size:22px }
+.help h3 { margin:18px 0 5px; font-size:15px }
+.help p { margin:0 0 8px }
+.help pre { overflow:auto; padding:10px; border-radius:7px; background:var(--code); font:12px/1.5 monospace }
+.help table { width:100%; border-collapse:collapse; font-size:12px }
+.help th,.help td { padding:6px 8px; border-bottom:1px solid var(--line); text-align:left }
+.help footer { display:flex; justify-content:flex-end; margin-top:18px }
 
-.vars-list {
-  max-height:calc(100vh - 180px);
-  overflow:auto;
-  padding:0 10px
-}
-
-.var {
-  padding:9px 0;
-  border-bottom:1px solid var(--line)
-}
-
-.var:last-child {
-  border-bottom:0
-}
-
-.var-name {
-  color:var(--blue);
-  font:700 12px monospace
-}
-
-.var-expr {
-  margin-top:2px;
-  color:var(--muted);
-  font:11px monospace;
-  overflow-wrap:anywhere
-}
-
-.var-value {
-  margin-top:3px;
-  font-size:13px;
-  font-weight:750
-}
-
-.var-value.bad {
-  color:var(--red)
-}
-
-/* ===== Notificação toast ===== */
-.toast {
-  position:fixed;
-  z-index:40;
-  right:20px;
-  bottom:20px;
-  display:none;
-  padding:9px 13px;
-  border-radius:7px;
-  background:var(--blue);
-  color:#fff;
-  box-shadow:var(--shadow);
-  font-size:12px
-}
-
-.toast.show {
-  display:block
-}
-
-/* ===== Modal de ajuda ===== */
-dialog {
-  width:min(680px,calc(100% - 32px));
-  padding:0;
-  border:1px solid var(--line);
-  border-radius:10px;
-  box-shadow:var(--shadow);
-  color:var(--ink)
-}
-
-dialog::backdrop {
-  background:#141C2466
-}
-
-.help {
-  padding:20px 22px
-}
-
-.help h2 {
-  margin:0 0 4px;
-  font-size:22px
-}
-
-.help h3 {
-  margin:18px 0 5px;
-  font-size:15px
-}
-
-.help p {
-  margin:0 0 8px
-}
-
-.help pre {
-  overflow:auto;
-  padding:10px;
-  border-radius:7px;
-  background:var(--code);
-  font:12px/1.5 monospace
-}
-
-.help table {
-  width:100%;
-  border-collapse:collapse;
-  font-size:12px
-}
-
-.help th,.help td {
-  padding:6px 8px;
-  border-bottom:1px solid var(--line);
-  text-align:left
-}
-
-.help footer {
-  display:flex;
-  justify-content:flex-end;
-  margin-top:18px
-}
-
-/* ===== Responsivo (empilha em telas estreitas) ===== */
 @media(max-width:850px) {
-  body {
-  overflow:auto
+  body { overflow:auto }
+  .toolbar { position:sticky; top:0 }
+  .header,.toolbar { align-items:flex-start; flex-direction:column }
+  .actions,.stats { justify-content:flex-start }
+  .app { flex-direction:column; overflow:visible }
+  .pane { width:100%; min-height:46vh }
+  .editor { border-right:0; border-bottom:1px solid var(--line) }
+  .editor textarea { min-height:300px }
+  .vars { top:12px; right:12px }
 }
 
-.toolbar {
-  position:sticky;
-  top:0
-}
-
-.header,.toolbar {
-  align-items:flex-start;
-  flex-direction:column
-}
-
-.actions,.stats {
-  justify-content:flex-start
-}
-
-.app {
-  flex-direction:column;
-  overflow:visible
-}
-
-.pane {
-  width:100%;
-  min-height:46vh
-}
-
-.editor {
-  border-right:0;
-  border-bottom:1px solid var(--line)
-}
-
-.editor textarea {
-  min-height:300px
-}
-
-.vars {
-  top:12px;
-  right:12px
-}
-
-}
-
-/* ===== Impressão A4 (padrão DPeople) ===== */
 @media print {
-  body {
-  display:block;
-  overflow:visible;
-  background:#fff;
-  font-family:"Arial Narrow","Liberation Sans Narrow",Arial,sans-serif
-}
-
-.header,.toolbar,.editor,.vars,.toast,dialog,.dp-app-footer {
-  display:none!important
-}
-
-.app,.preview {
-  display:block;
-  width:100%;
-  overflow:visible;
-  padding:0
-}
-
-.document {
-  max-width:none
-}
-
-  .calc {
-  color:#000;
-  background:none;
-  padding:0
-  }
-
-.dp-print-mark {
-  display:block;
-  position:fixed;
-  bottom:0.3cm;
-  right:0.3cm;
-  font-size:8px;
-  color:#9aa3ad;
-  font-family:"Arial Narrow","Liberation Sans Narrow",Arial,sans-serif
-}
-
-@page {
-  size:A4;
-  margin:1cm
-}
-
+  body { display:block; overflow:visible; background:#fff; font-family:"Arial Narrow","Liberation Sans Narrow",Arial,sans-serif }
+  .header,.toolbar,.editor,.vars,.toast,dialog,.dp-app-footer { display:none!important }
+  .app,.preview { display:block; width:100%; overflow:visible; padding:0 }
+  .document { max-width:none }
+  .calc { color:#000; background:none; padding:0 }
+  .dp-print-mark { display:block; position:fixed; bottom:0.3cm; right:0.3cm; font-size:8px; color:#9aa3ad; font-family:"Arial Narrow","Liberation Sans Narrow",Arial,sans-serif }
+  @page { size:A4; margin:1cm }
 }
 </style>
 </head>
 <body>
-<header class="header"><div><h1>DocNum</h1><p>Documento com variáveis nomeadas e cálculos integrados</p></div><div class="stats"><span class="badge">Cálculo automático</span><span class="stat" id="vcount">0 variáveis</span><span class="stat" id="ecount">0 erros</span></div></header>
-<div class="toolbar"><small>Atalhos: <b>Ctrl + Espaço</b> variáveis · <b>F2</b> painel · <b>Ctrl + S</b> salvar · <b>Ctrl + B/I</b> negrito/itálico · <b>Ctrl + D</b> duplicar linha · <b>Alt + ↑↓</b> mover linha · <b>|3x5 + Enter</b> tabela rápida</small><div class="actions"><button class="button" id="helpBtn">Ajuda</button><button class="button" id="varsBtn">Variáveis (F2)</button><button class="button primary" id="saveBtn">Salvar .md</button><button class="button primary" id="printBtn">Imprimir / PDF</button></div></div>
-<main class="app"><section class="pane editor" id="editorPane"><label class="label" for="input"><span>Editor</span><span>Markdown + cálculos</span></label><textarea id="input" spellcheck="false"># Rescisão contratual sem justa causa
+<header class="header">
+  <div><h1>DocNum</h1><p>Documento com variáveis nomeadas e cálculos integrados</p></div>
+  <div class="stats">
+    <span class="badge">Cálculo automático</span>
+    <span class="stat" id="vcount">0 variáveis</span>
+    <span class="stat" id="ecount">0 erros</span>
+  </div>
+</header>
+<div class="toolbar">
+  <small>Atalhos: <b>Ctrl + Espaço</b> variáveis · <b>F2</b> painel · <b>Ctrl + S</b> salvar · <b>Ctrl + B/I</b> negrito/itálico · <b>Ctrl + D</b> duplicar linha · <b>Alt + ↑↓</b> mover linha · <b>|3x5 + Enter</b> tabela rápida</small>
+  <div class="actions">
+    <button class="button" id="helpBtn">Ajuda</button>
+    <button class="button" id="varsBtn">Variáveis (F2)</button>
+    <button class="button primary" id="saveBtn">Salvar .md</button>
+    <button class="button primary" id="printBtn">Imprimir / PDF</button>
+  </div>
+</div>
+<main class="app">
+  <section class="pane editor" id="editorPane">
+    <label class="label" for="input"><span>Editor</span><span>Markdown + cálculos</span></label>
+    <textarea id="input" spellcheck="false"># Cálculo de Anuênio Inline
 
-Este documento é um exemplo que usa todos os recursos do DocNum: variável de número, de hora e de data, operadores matemáticos, referência inline com `@nome`, cálculo direto com `[ ]`, sintaxe antiga com `{{ }}`, texto protegido entre aspas, tabela e formatação.
+@ salarioBase = 1000
 
-## 1. Datas do contrato
+O {{@anuenio=2%}} de @salarioBase, ou seja, [salarioBase * anuenio].
+
+- O Anuênio: 2% do 1.000,00, ou seja, 20,00.
+
+## Outros testes de Data e Hora
 
 # dataAdmissao = 01/03/2024
 # dataDemissao = 15/08/2026
 @ diasTrabalhados = dataDemissao - dataAdmissao
 
-O contrato teve início em @dataAdmissao e foi encerrado em @dataDemissao, totalizando @diasTrabalhados dias trabalhados.
+@ entrada = 08:00
+@ saida = 17:30
+@ horasDia = saida - entrada
 
-## 2. Salário e horas extras
-
-@ salarioBase = 3200
-@ valorHora = salarioBase / 220
-: horasExtrasMes = 12:30
-@ valorHorasExtras = valorHora * horasExtrasMes
-
-O empregado recebia salário-base de @salarioBase, com valor de hora de @valorHora. No último mês trabalhado acumulou @horasExtrasMes de horas extras, totalizando @valorHorasExtras a pagar.
-
-## 3. Adicional noturno
-
-@ percentualAdicionalNoturno = 20%
-@ adicionalNoturno = salarioBase * percentualAdicionalNoturno
-
-O adicional noturno corresponde a @percentualAdicionalNoturno sobre o salário-base, resultando em @adicionalNoturno.
-
-## 4. Aviso prévio
-
-@ diasAvisoPrevio = 30
-# dataFimAvisoPrevio = dataDemissao + diasAvisoPrevio
-
-O aviso prévio indenizado é de @diasAvisoPrevio dias, projetando o fim do contrato para @dataFimAvisoPrevio.
-
-## 5. FGTS e multa rescisória
-
-@ saldoFgts = 15000
-@ multaFgts = saldoFgts * 40%
-
-O saldo do FGTS na conta vinculada é de @saldoFgts. A multa de 40% devida na rescisão sem justa causa é de @multaFgts.
-
-## 6. Correção monetária (juros compostos)
-
-@ valorOriginal = 1000
-@ taxaMensal = 1%
-@ mesesAtraso = 6
-@ valorCorrigido = valorOriginal * (1 + taxaMensal) ^ mesesAtraso
-
-Aplicando juros de @taxaMensal ao mês por @mesesAtraso meses, o valor original de @valorOriginal é corrigido para @valorCorrigido.
-
-## 7. Cálculo direto no texto
-
-Sem precisar declarar uma variável nova, também dá para calcular direto no meio da frase. Por exemplo, um desconto de adiantamento salarial de [500-120] reais, ou a soma simples entre salário-base e adicional noturno, que resulta em [salarioBase + adicionalNoturno].
-
-## 8. Texto protegido com aspas
-
-Escreva "@naoCalcular" entre aspas para mostrar o texto tal como está, sem que ele vire referência a variável.
-
-## 9. Sintaxe antiga (compatibilidade)
-
-salarioBaseAntigo = 3000
-
-Documentos antigos continuam funcionando: o salário-base nessa sintaxe é {{ salarioBaseAntigo }}, calculado normalmente, só que sem aparecer como campo de dado visível.
-
-## 10. Resumo em tabela
-
-| Verba | Valor |
-|---|---:|
-| Dias trabalhados | @diasTrabalhados |
-| Horas extras | @valorHorasExtras |
-| Adicional noturno | @adicionalNoturno |
-| Multa FGTS | @multaFgts |
-
-## 11. Observações
-
-- Datas usam o formato **DD/MM/AAAA**.
-- Horas usam o formato **HH:MM**, sem limite de 24h.
-- Percentuais usam o símbolo `%`, como em `20%`.
-- Use `Ctrl + Espaço` para inserir uma variável já declarada.
-
-> Dica: pressione F2 para ver a lista de todas as variáveis calculadas no documento.</textarea><div class="picker" id="picker" hidden><div class="picker-head">Selecionar variável · ↑ ↓ Enter Esc</div><div id="pickerList"></div></div></section><section class="pane preview" id="previewPane" aria-label="Visualização do documento"><div class="label"><span>Visualização</span><span>Atualizada automaticamente</span></div><div class="document" id="preview"></div><aside class="vars" id="vars" hidden><div class="vars-head"><span>Variáveis calculadas</span><button class="vars-close" id="closeVars" aria-label="Fechar painel de variáveis">×</button></div><div class="vars-list" id="varsList"></div></aside></section></main>
+O contrato durou @diasTrabalhados dias, com @horasDia trabalhadas por dia.</textarea>
+    <div class="picker" id="picker" hidden>
+      <div class="picker-head">Selecionar variável · ↑ ↓ Enter Esc</div>
+      <div id="pickerList"></div>
+    </div>
+  </section>
+  <section class="pane preview" id="previewPane" aria-label="Visualização do documento">
+    <div class="label"><span>Visualização</span><span>Atualizada automaticamente</span></div>
+    <div class="document" id="preview"></div>
+    <aside class="vars" id="vars" hidden>
+      <div class="vars-head"><span>Variáveis calculadas</span><button class="vars-close" id="closeVars" aria-label="Fechar painel de variáveis">×</button></div>
+      <div class="vars-list" id="varsList"></div>
+    </aside>
+  </section>
+</main>
 <footer class="dp-app-footer">Desenvolvido por João Miguel E. Ferreira | DPeople · contato.dpeople@gmail.com</footer>
 <div class="dp-print-mark">DPeople</div>
-<dialog id="help"><div class="help"><h2>Como usar o DocNum</h2><p>Escreva o documento normalmente. Declare um dado ou cálculo no início da linha com <code>@</code> (número), <code>:</code> (hora) ou <code>#</code> (data) — ele aparece no próprio documento, e você pode referenciá-lo em qualquer lugar do texto com <code>@nome</code>.</p><h3>1. Número</h3><pre>@ valorAcordo = 8500
+<dialog id="help"><div class="help">
+  <h2>Como usar o DocNum</h2>
+  <p>Escreva o documento normalmente. Declare um dado ou cálculo no início da linha com <code>@ nome = valor</code> — o tipo (número, data, mês/ano ou hora) é detectado sozinho pelo formato do valor, e o campo aparece no próprio documento. Você pode referenciar em qualquer lugar do texto com <code>@nome</code>. <code>:</code> e <code>#</code> continuam funcionando (compatibilidade), mas não são mais necessários.</p>
+  <h3>1. Número</h3>
+  <pre>@ valorAcordo = 8500
 @ percentualPatronal = 20%
-@ contribuicaoPatronal = valorAcordo * percentualPatronal</pre><p>Aceita <code>+ - * / ( ) ^</code> e porcentagem. <code>^</code> é potência: <code>(1 + 5%)^3</code> calcula juros compostos.</p><h3>2. Hora</h3><pre>: entrada = 08:00
-: saida = 17:30
-: horasTrabalhadas = saida - entrada
-
-: horasSegunda = 08:00
-: horasTerca = 09:15
-: totalSemana = horasSegunda + horasTerca</pre><p>Formato <code>HH:MM</code>. Some ou subtraia hora com hora — a subtração serve tanto para calcular duração entre dois horários (entrada/saída) quanto a soma para acumular horas (sem limite de 24h, útil para total de horas extras no mês).</p><p>Multiplicar ou dividir hora por número converte para decimal e o resultado vira dinheiro/número — não continua sendo hora:</p><pre>@ valorHora = 25
-: horasExtras = 02:30
-@ valorExtra = valorHora * horasExtras</pre><h3>3. Data</h3><pre># dataAdmissao = 15/03/2026
+@ contribuicaoPatronal = valorAcordo * percentualPatronal</pre>
+  <p>Aceita <code>+ - * / ( ) ^</code> e porcentagem. <code>^</code> é potência: <code>(1 + 5%)^3</code> calcula juros compostos.</p>
+  <h3>2. Hora</h3>
+  <pre>@ entrada = 08:00
+@ saida = 17:30
+@ horasTrabalhadas = saida - entrada</pre>
+  <p>Formato <code>HH:MM</code>. Some ou subtraia hora com hora. Multiplicar ou dividir por número converte para decimal.</p>
+  <h3>3. Data</h3>
+  <pre>@ dataAdmissao = 15/03/2026
 @ diasExperiencia = 90
-# fimExperiencia = dataAdmissao + diasExperiencia
+@ fimExperiencia = dataAdmissao + diasExperiencia</pre>
+  <p>Formato <code>DD/MM/AAAA</code>. Data mais número soma dias; data menos data dá a diferença em dias.</p>
+  <h3>4. Mês/Ano</h3>
+  <pre>@ inicioDesconto = 05/2026
+@ fimDesconto = inicioDesconto + 3</pre>
+  <p>Formato <code>MM/AAAA</code>, exibido por extenso (ex.: <code>Maio/2026</code>).</p>
+  <h3>5. Variável inline (declarar no meio do texto)</h3>
+  <pre>O {{@anuenio = 2%}} de @salarioBase, ou seja, [salarioBase * anuenio].</pre>
+  <p>Declara e mostra "Rótulo: valor" no próprio lugar (tanto com <code>{{ }}</code> quanto com <code>[ ]</code>), sem precisar de uma linha separada.</p>
+  <h3>6. Cálculo direto no texto, sem variável</h3>
+  <pre>O saldo é [100-50]. A diferença de dias é [dataDemissao - dataAdmissao].</pre>
+  <footer><button class="button" id="closeHelp">Fechar</button></footer>
+</div></dialog>
+<div class="toast" id="toast"></div>
 
-# dataDemissao = 20/06/2026
-@ diasTrabalhados = dataDemissao - dataAdmissao</pre><p>Formato <code>DD/MM/AAAA</code>. Data mais número soma dias; data menos número volta dias; data menos data dá a diferença em dias.</p><h3>4. Usar o valor no texto</h3><pre>O acordo foi de @valorAcordo.
-Trabalhou @horasTrabalhadas no dia @dataAdmissao.</pre><p><code>@nome</code> funciona igual para número, hora e data — só substitui se <code>nome</code> já foi declarado; caso contrário mantém o texto original.</p><h3>5. Mostrar "@algo" sem calcular</h3><pre>Escreva "@naoCalcular" para mostrar o texto tal como está.</pre><p>Entre aspas simples <code>'...'</code> ou duplas <code>"..."</code>.</p><h3>6. Tabelas</h3><pre>| Descrição | Valor |
-|---|---:|
-| Acordo | @valorAcordo |
-| Horas | @horasTrabalhadas |</pre><h3>Documentos antigos</h3><p>A sintaxe anterior continua funcionando:</p><pre>salarioBase = 3500
-valorHora = salarioBase / 220
-O valor da hora é {{ valorHora }}.</pre><p>Essas declarações (sem <code>@</code>/<code>:</code>/<code>#</code>) ficam invisíveis — só aparecem via <code>{{ }}</code> ou <code>[ ]</code>.</p><h3>7. Cálculo direto no texto, sem variável</h3><pre>O saldo é [100-50].
-A diferença de dias é [dataDemissao - dataAdmissao].</pre><p><code>[ ]</code> funciona igual a <code>{{ }}</code>: calcula qualquer expressão (números, variáveis já declaradas, hora ou data) direto no meio do texto, sem precisar declarar uma variável nova.</p><h3>Limitações conhecidas</h3><ul><li>Hora não trata virada de meia-noite (turno que começa num dia e termina no outro).</li><li>Um título de seção que por acaso siga o formato <code># nomeDaVariavel = valor</code> é interpretado como declaração de data, não como cabeçalho — evite esse padrão exato em títulos.</li></ul><h3>Regras e atalhos</h3><table><tr><th>Recurso</th><th>Como usar</th></tr><tr><td>Nome</td><td>camelCase, sem acentos, espaços ou símbolos.</td></tr><tr><td>Inserir variável</td><td>Ctrl + Espaço, setas e Enter.</td></tr><tr><td>Ver variáveis</td><td>F2 ou botão Variáveis.</td></tr><tr><td>Salvar</td><td>Ctrl + S ou botão Salvar .md.</td></tr><tr><td>Imprimir/PDF</td><td>Ctrl + P ou botão Imprimir / PDF.</td></tr><tr><td>Indentação</td><td>Tab insere dois espaços (em listas, indenta/desindenta o item).</td></tr><tr><td>Negrito / Itálico / Código</td><td>Ctrl + B / Ctrl + I / Ctrl + `, no texto selecionado.</td></tr><tr><td>Duplicar / mover linha</td><td>Ctrl + D duplica · Alt + ↑ / ↓ move a linha.</td></tr><tr><td>Fechamento automático</td><td>( [ { " ' ` fecham sozinhos ao digitar o abre-parênteses/aspas.</td></tr><tr><td>Tabela rápida</td><td>Digite <code>|3x5</code> e Enter numa linha em branco, ou use Ctrl + Alt + T. Tab na última célula cria nova linha.</td></tr></table><footer><button class="button" id="closeHelp">Fechar</button></footer></div></dialog><div class="toast" id="toast"></div>
 <script>
 'use strict';
 const $=id=>document.getElementById(id), input=$('input'), preview=$('preview'), picker=$('picker'), pickerList=$('pickerList'), vars=$('vars'), varsList=$('varsList'), toast=$('toast'), fmt=new Intl.NumberFormat('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
-// pickerPrefix: texto a inserir ANTES do nome escolhido no seletor de variáveis.
-// "@" abre o seletor sem inserir o caractere no texto — só vira "@nome" se algo for escolhido.
 let pickerPrefix='';
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
 const number=s=>{let v=String(s);if(v.includes(','))v=v.replace(/\./g,'').replace(',','.');else if((v.match(/\./g)||[]).length>1)v=v.replace(/\./g,'');return Number(v)}, shown=x=>fmt.format(Object.is(x,-0)?0:x);
+
 // ===================================================================
-// Motor de cálculo — parser próprio (sem eval), com precedência de
-// operadores, percentuais e detecção de dependência circular.
-//   Parser  → transforma uma expressão em texto numa árvore (AST)
-//   Engine  → lê o documento, extrai as variáveis "nome = expr" e
-//             resolve cada uma recursivamente, guardando erros por linha
+// Motor de cálculo — Parser Unificado (detecta Data, Hora e Número automaticamente)
 // ===================================================================
 class CalcError extends Error{}
 
-// Parser: tokeniza e monta a AST de uma expressão (+ - * / () ^ e %).
-// mode controla como literais são lidos: 'hour' reconhece "HH:MM",
-// 'date' reconhece "DD/MM/AAAA" — em ambos os casos, antes de tokenizar
-// caractere a caractere, o trecho é isolado e convertido para um token
-// numérico já marcado com o tipo (mesma técnica usada em inline() para
-// proteger {{ }} e aspas: extrai, marca, tokeniza o resto normalmente).
 class Parser{
-  constructor(s,mode='number'){this.mode=mode;this.s=s;
-    if(mode==='date')this.s=this.s.replace(/\b(\d{1,2})\/(\d{1,2})\/(\d{2,4})\b/g,(m,d,mo,y)=>{y=y.length===2?'20'+y:y;let ds=+d,ms=+mo,ys=+y;let check=new Date(Date.UTC(ys,ms-1,ds));if(ms<1||ms>12||ds<1||ds>31||check.getUTCFullYear()!==ys||check.getUTCMonth()!==ms-1||check.getUTCDate()!==ds)throw new CalcError('data inválida: '+m);return '\u0002'+Math.floor(check.getTime()/86400000)+'\u0003'});
-    if(mode==='hour')this.s=this.s.replace(/\b(\d{1,3}):([0-5]\d)\b/g,(m,h,mi)=>'\u0004'+(+h*60+ +mi)+'\u0003');
-    this.i=0;this.t=[];this.lex();this.p=0}
-  lex(){while(this.i<this.s.length){let c=this.s[this.i];
-    if(c==='\u0002'||c==='\u0004'){let j=this.s.indexOf('\u0003',this.i+1),v=+this.s.slice(this.i+1,j);this.t.push({t:'n',v,p:false,type:c==='\u0002'?'date':'hour'});this.i=j+1;continue}
-    if(/\s/.test(c)){this.i++;continue}if(/\d/.test(c)){let m=this.s.slice(this.i).match(/^\d[\d.,]*%?/)[0],pct=m.endsWith('%');m=pct?m.slice(0,-1):m;let n=number(m);if(!Number.isFinite(n))throw new CalcError('número inválido: '+m);this.t.push({t:'n',v:pct?n/100:n,p:pct});this.i+=m.length+(pct?1:0);continue}if(/[A-Za-z]/.test(c)){let m=this.s.slice(this.i).match(/^[A-Za-z][A-Za-z0-9]*/)[0];this.t.push({t:'id',v:m});this.i+=m.length;continue}if('+-*/()^'.includes(c)){this.t.push({t:c});this.i++;continue}throw new CalcError('caractere não permitido: '+c)}this.t.push({t:'eof'})}
+  constructor(s){
+    this.s=String(s);
+    // Detecção unificada: substitui literais por marcadores antes de tokenizar
+    // 1. Data (DD/MM/AAAA)
+    this.s=this.s.replace(/\b(\d{1,2})\/(\d{1,2})\/(\d{2,4})\b/g, (m,d,mo,y)=>{
+      y=y.length===2?'20'+y:y;
+      let ds=+d,ms=+mo,ys=+y;
+      let check=new Date(Date.UTC(ys,ms-1,ds));
+      if(ms<1||ms>12||ds<1||ds>31||check.getUTCFullYear()!==ys||check.getUTCMonth()!==ms-1||check.getUTCDate()!==ds) throw new CalcError('data inválida: '+m);
+      return '\u0002'+Math.floor(check.getTime()/86400000)+'\u0003';
+    });
+    // 2. Mês/Ano (MM/AAAA)
+    this.s=this.s.replace(/\b(\d{1,2})\/(\d{4})\b/g, (m,mo,y)=>{
+      let ms=+mo,ys=+y;
+      if(ms<1||ms>12) throw new CalcError('mês inválido: '+m);
+      return '\u0005'+(ys*12+(ms-1))+'\u0003';
+    });
+    // 3. Hora (HH:MM)
+    this.s=this.s.replace(/\b(\d{1,3}):([0-5]\d)\b/g, (m,h,mi)=>'\u0004'+(+h*60+ +mi)+'\u0003');
+    
+    this.i=0;this.t=[];this.lex();this.p=0;
+  }
+  lex(){
+    while(this.i<this.s.length){
+      let c=this.s[this.i];
+      if(c==='\u0002'||c==='\u0004'||c==='\u0005'){
+        let j=this.s.indexOf('\u0003',this.i+1), v=+this.s.slice(this.i+1,j);
+        this.t.push({t:'n',v,p:false,type:c==='\u0002'?'date':c==='\u0004'?'hour':'month'});
+        this.i=j+1; continue;
+      }
+      if(/\s/.test(c)){this.i++;continue}
+      if(/\d/.test(c)){
+        let m=this.s.slice(this.i).match(/^\d[\d.,]*%?/)[0], pct=m.endsWith('%');
+        m=pct?m.slice(0,-1):m;
+        let n=number(m);
+        if(!Number.isFinite(n)) throw new CalcError('número inválido: '+m);
+        this.t.push({t:'n',v:pct?n/100:n,p:pct});
+        this.i+=m.length+(pct?1:0); continue;
+      }
+      if(/[A-Za-z]/.test(c)){
+        let m=this.s.slice(this.i).match(/^[A-Za-z][A-Za-z0-9]*/)[0];
+        this.t.push({t:'id',v:m});
+        this.i+=m.length; continue;
+      }
+      if('+-*/()^'.includes(c)){this.t.push({t:c});this.i++;continue}
+      throw new CalcError('caractere não permitido: '+c);
+    }
+    this.t.push({t:'eof'});
+  }
   peek(){return this.t[this.p]}
   take(t){if(this.peek().t!==t)throw new CalcError('era esperado “'+t+'”');return this.t[this.p++]}
   parse(){if(this.peek().t==='eof')throw new CalcError('expressão vazia');let n=this.add();if(this.peek().t!=='eof')throw new CalcError('expressão incompleta');return n}
@@ -842,150 +398,284 @@ class Parser{
   pow(){let n=this.primary();if(this.peek().t==='^'){this.p++;return{k:'b',o:'^',l:n,r:this.unary()}}return n}
   primary(){let t=this.peek();if(t.t==='n'){this.p++;return{k:'n',v:t.v,p:t.p,type:t.type||'number'}}if(t.t==='id'){this.p++;return{k:'id',n:t.v}}if(t.t==='('){this.p++;let n=this.add();this.take(')');return n}throw new CalcError('valor ou variável esperado')}
 }
-// Engine: lê o documento linha a linha, registra variáveis válidas
-// ("nome = expressão"), calcula cada uma sob demanda (this.calc) e
-// acumula erros (nome inválido, duplicado, dependência circular etc.)
+
 class Engine{
   constructor(){this.reset()}
   reset(){this.vars=new Map();this.vals=new Map();this.issues=[]}
   issue(line,msg){if(!this.issues.some(x=>x.line===line&&x.msg===msg))this.issues.push({line,msg})}
-  load(text){this.reset();let keep=[],fence=false;String(text).replace(/\r\n?/g,'\n').split('\n').forEach((line,i)=>{let s=line.trim();if(/^```/.test(s)){fence=!fence;keep.push(line);return}if(fence||/^\s*\|/.test(line)){keep.push(line);return}let lineNo=i+1;
-    // sintaxes visíveis: "@ nome = expr" (número), ": nome = expr" (hora), "# nome = expr" (data)
-    let d=line.match(/^\s*([@:#])\s*([^=]+?)\s*=\s*(.*?)\s*;?\s*$/);
-    if(d){let mode=d[1]==='@'?'number':d[1]===':'?'hour':'date';this.declare(d[2].trim(),d[3].trim(),lineNo,true,mode);keep.push(line);return}
-    // sintaxe antiga "nome = expr" — mantida por compatibilidade, invisível
-    let m=line.match(/^\s*([^=]+?)\s*=\s*(.*?)\s*;?\s*$/);
-    if(!m){keep.push(line);return}
-    let legacyExpr=m[2].trim(),legacyMode=/\b\d{1,2}\/\d{1,2}\/\d{2,4}\b/.test(legacyExpr)?'date':'number';this.declare(m[1].trim(),legacyExpr,lineNo,false,legacyMode)});for(const [name,v] of this.vars)try{this.calc(name)}catch(e){this.issue(v.line,'“'+name+'”: '+e.message);this.vals.set(name,{error:e.message})}return keep}
-  // valida nome/expressão e registra a variável. mode define como literais são lidos dentro da expressão
-  declare(name,expr,lineNo,visible,mode='number'){if(!/^[A-Za-z][A-Za-z0-9]*$/.test(name)){this.issue(lineNo,'nome inválido “'+name+'”: use camelCase, sem acentos, espaços ou símbolos');return}if(this.vars.has(name)){this.issue(lineNo,'variável duplicada: “'+name+'”');return}try{let ast=new Parser(expr,mode).parse();this.vars.set(name,{name,expr,ast,line:lineNo,visible,kind:ast.k==='n'?'input':'calc'})}catch(e){this.issue(lineNo,'“'+name+'”: '+e.message)}}
-  calc(name,stack=[]){if(this.vals.has(name)){let r=this.vals.get(name);if(r.error)throw new CalcError(r.error);return r}if(!this.vars.has(name))throw new CalcError('variável não definida: “'+name+'”');if(stack.includes(name))throw new CalcError('dependência circular: '+stack.concat(name).join(' → '));let r=this.eval(this.vars.get(name).ast,stack.concat(name));this.vals.set(name,r);return r}
-  // avaliação com tipo: number (padrão), hour (minutos totais) e date (dias desde a época) —
-  // cada combinação de tipos numa operação binária é resolvida em opDate/opHour/número puro
-  eval(n,stack){if(n.k==='n')return{v:n.v,p:n.p,type:n.type||'number'};if(n.k==='id')return this.calc(n.n,stack);if(n.k==='u'){let r=this.eval(n.x,stack);if(r.type!=='number')throw new CalcError('sinal de menos só é válido em número');return{v:n.o==='-'?-r.v:r.v,p:false,type:'number'}}let a=this.eval(n.l,stack),b=this.eval(n.r,stack);if(a.type==='date'||b.type==='date')return this.opDate(n.o,a,b);if(a.type==='hour'||b.type==='hour')return this.opHour(n.o,a,b);let v=n.o==='+'?a.v+b.v:n.o==='-'?a.v-b.v:n.o==='*'?a.v*b.v:n.o==='/'?a.v/b.v:Math.pow(a.v,b.v);if(n.o==='/'&&b.v===0)throw new CalcError('divisão por zero');if(!Number.isFinite(v))throw new CalcError('resultado numérico inválido');return{v,p:false,type:'number'}}
-  // data: "+" soma dias (data+número), "-" subtrai dias (data-número) ou calcula diferença em dias (data-data)
-  opDate(o,a,b){if(o==='+'){if(a.type==='date'&&b.type==='date')throw new CalcError('não é possível somar duas datas');let base=a.type==='date'?a:b,n=a.type==='date'?b:a;return{v:base.v+Math.round(n.v),p:false,type:'date'}}if(o==='-'){if(a.type!=='date')throw new CalcError('não é possível subtrair uma data de um número');if(b.type==='date')return{v:a.v-b.v,p:false,type:'number'};return{v:a.v-Math.round(b.v),p:false,type:'date'}}throw new CalcError('em data, use apenas + (somar dias) ou - (subtrair dias ou outra data)')}
-  // hora: "+"/"-" entre duas horas resulta em hora (soma sem limite de 24h); "*"/"/" com um número
-  // converte a hora para decimal e o resultado vira número (ex: valorHora * horasExtras = dinheiro)
-  opHour(o,a,b){if(o==='+'||o==='-'){if(a.type!=='hour'||b.type!=='hour')throw new CalcError('para somar ou subtrair hora, os dois valores precisam ser hora');return{v:o==='+'?a.v+b.v:a.v-b.v,p:false,type:'hour'}}if(o==='*'||o==='/'){if(a.type==='hour'&&b.type==='hour')throw new CalcError('não é possível multiplicar ou dividir hora por hora');let hv=(a.type==='hour'?a.v:b.v)/60,nv=a.type==='hour'?b.v:a.v,v;if(o==='*')v=hv*nv;else if(a.type==='hour'){if(nv===0)throw new CalcError('divisão por zero');v=hv/nv}else{if(hv===0)throw new CalcError('divisão por zero');v=nv/hv}if(!Number.isFinite(v))throw new CalcError('resultado numérico inválido');return{v,p:false,type:'number'}}throw new CalcError('em hora, use apenas + - * /')}
-  inline(s,mode=expressionMode(s)){return this.eval(new Parser(s,mode).parse(),['{{ }}'])}
+  load(text){
+    this.reset();
+    let keep=[], fence=false;
+    String(text).replace(/\r\n?/g,'\n').split('\n').forEach((line,i)=>{
+      let s=line.trim();
+      if(/^```/.test(s)){fence=!fence;keep.push(line);return}
+      let lineNo=i+1;
+      
+      // Variáveis inline {{@nome=expr}} ou [@nome=expr]
+      if(!fence){
+        let im, re=/\{\{\s*@([A-Za-z][A-Za-z0-9]*)\s*=\s*([^{}]+?)\s*\}\}/g;
+        while((im=re.exec(line))) this.declare(im[1], im[2].trim(), lineNo, true);
+        
+        let re2=/\[\s*@([A-Za-z][A-Za-z0-9]*)\s*=\s*([^\[\]]+?)\s*\]/g;
+        while((im=re2.exec(line))) this.declare(im[1], im[2].trim(), lineNo, true);
+      }
+      
+      if(fence||/^\s*\|/.test(line)){keep.push(line);return}
+      
+      // Sintaxes no início da linha
+      let d=line.match(/^\s*([@:#])\s*([^=]+?)\s*=\s*(.*?)\s*;?\s*$/);
+      if(d){this.declare(d[2].trim(), d[3].trim(), lineNo, true); keep.push(line); return}
+      
+      // Sintaxe antiga (invisível)
+      let m=line.match(/^\s*([A-Za-z][A-Za-z0-9]*)\s*=\s*(.*?)\s*;?\s*$/);
+      if(!m){keep.push(line);return}
+      this.declare(m[1].trim(), m[2].trim(), lineNo, false);
+    });
+    
+    for(const [name,v] of this.vars) try{this.calc(name)}catch(e){this.issue(v.line,'“'+name+'”: '+e.message);this.vals.set(name,{error:e.message})}
+    return keep;
+  }
+  declare(name,expr,lineNo,visible){
+    if(!/^[A-Za-z][A-Za-z0-9]*$/.test(name)){this.issue(lineNo,'nome inválido “'+name+'”: use camelCase, sem acentos, espaços ou símbolos');return}
+    if(this.vars.has(name)){this.issue(lineNo,'variável duplicada: “'+name+'”');return}
+    try{
+      let ast=new Parser(expr).parse();
+      this.vars.set(name,{name,expr,ast,line:lineNo,visible,kind:ast.k==='n'?'input':'calc'});
+    }catch(e){this.issue(lineNo,'“'+name+'”: '+e.message)}
+  }
+  calc(name,stack=[]){
+    if(this.vals.has(name)){let r=this.vals.get(name);if(r.error)throw new CalcError(r.error);return r}
+    if(!this.vars.has(name))throw new CalcError('variável não definida: “'+name+'”');
+    if(stack.includes(name))throw new CalcError('dependência circular: '+stack.concat(name).join(' → '));
+    let r=this.eval(this.vars.get(name).ast,stack.concat(name));
+    this.vals.set(name,r);
+    return r;
+  }
+  eval(n,stack){
+    if(n.k==='n')return{v:n.v,p:n.p,type:n.type||'number'};
+    if(n.k==='id')return this.calc(n.n,stack);
+    if(n.k==='u'){let r=this.eval(n.x,stack);if(r.type!=='number')throw new CalcError('sinal de menos só é válido em número');return{v:n.o==='-'?-r.v:r.v,p:false,type:'number'}}
+    let a=this.eval(n.l,stack), b=this.eval(n.r,stack);
+    if(a.type==='date'||b.type==='date')return this.opDate(n.o,a,b);
+    if(a.type==='hour'||b.type==='hour')return this.opHour(n.o,a,b);
+    if(a.type==='month'||b.type==='month')return this.opMonth(n.o,a,b);
+    let v=n.o==='+'?a.v+b.v:n.o==='-'?a.v-b.v:n.o==='*'?a.v*b.v:n.o==='/'?a.v/b.v:Math.pow(a.v,b.v);
+    if(n.o==='/'&&b.v===0)throw new CalcError('divisão por zero');
+    if(!Number.isFinite(v))throw new CalcError('resultado numérico inválido');
+    return{v,p:false,type:'number'};
+  }
+  opDate(o,a,b){
+    if(o==='+'){if(a.type==='date'&&b.type==='date')throw new CalcError('não é possível somar duas datas');let base=a.type==='date'?a:b,n=a.type==='date'?b:a;return{v:base.v+Math.round(n.v),p:false,type:'date'}}
+    if(o==='-'){if(a.type!=='date')throw new CalcError('não é possível subtrair uma data de um número');if(b.type==='date')return{v:a.v-b.v,p:false,type:'number'};return{v:a.v-Math.round(b.v),p:false,type:'date'}}
+    throw new CalcError('em data, use apenas + (somar dias) ou - (subtrair dias ou outra data)')
+  }
+  opMonth(o,a,b){
+    if(o==='+'){if(a.type==='month'&&b.type==='month')throw new CalcError('não é possível somar dois meses/ano');let base=a.type==='month'?a:b,n=a.type==='month'?b:a;if(n.type!=='number')throw new CalcError('só é possível somar mês/ano com um número de meses');return{v:base.v+Math.round(n.v),p:false,type:'month'}}
+    if(o==='-'){if(a.type!=='month')throw new CalcError('não é possível subtrair um mês/ano de um número');if(b.type==='month')return{v:a.v-b.v,p:false,type:'number'};if(b.type!=='number')throw new CalcError('só é possível subtrair um número de meses');return{v:a.v-Math.round(b.v),p:false,type:'month'}}
+    throw new CalcError('em mês/ano, use apenas + (somar meses) ou - (subtrair meses ou outro mês/ano)')
+  }
+  opHour(o,a,b){
+    if(o==='+'||o==='-'){if(a.type!=='hour'||b.type!=='hour')throw new CalcError('para somar ou subtrair hora, os dois valores precisam ser hora');return{v:o==='+'?a.v+b.v:a.v-b.v,p:false,type:'hour'}}
+    if(o==='*'||o==='/'){if(a.type==='hour'&&b.type==='hour')throw new CalcError('não é possível multiplicar ou dividir hora por hora');let hv=(a.type==='hour'?a.v:b.v)/60,nv=a.type==='hour'?b.v:a.v,v;if(o==='*')v=hv*nv;else if(a.type==='hour'){if(nv===0)throw new CalcError('divisão por zero');v=hv/nv}else{if(hv===0)throw new CalcError('divisão por zero');v=nv/hv}if(!Number.isFinite(v))throw new CalcError('resultado numérico inválido');return{v,p:false,type:'number'}}
+    throw new CalcError('em hora, use apenas + - * /')
+  }
+  inline(s){return this.eval(new Parser(s).parse(),['{{ }}'])}
   value(name){return this.vals.get(name)}
 }
 const engine=new Engine();
 
 // ===================================================================
-// Renderização: markdown(text) converte o editor em HTML, chamando
-// inline() para resolver "{{ expressão }}" e negrito/itálico/código.
-// render() é o ponto de entrada chamado a cada tecla digitada.
+// Renderização
 // ===================================================================
-// Formata minutos totais como HH:MM (negativo com sinal, sem limite de 24h — cobre tanto duração quanto diferença de horário)
 function showHour(min){let neg=min<0;min=Math.round(Math.abs(min));let h=Math.floor(min/60),m=min%60;return(neg?'-':'')+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')}
-// Formata dias desde a época (1970-01-01 UTC) como DD/MM/AAAA
 function showDate(serial){let dt=new Date(serial*86400000);return String(dt.getUTCDate()).padStart(2,'0')+'/'+String(dt.getUTCMonth()+1).padStart(2,'0')+'/'+dt.getUTCFullYear()}
-function result(r){if(!r||r.error)return'Erro';if(r.type==='hour')return showHour(r.v);if(r.type==='date')return showDate(r.v);return r.p?shown(r.v*100)+'%':shown(r.v)}
+const MONTH_NAMES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+function showMonth(total){total=Math.round(total);let y=Math.floor(total/12),mi=((total%12)+12)%12;return MONTH_NAMES[mi]+'/'+y}
+function result(r){if(!r||r.error)return'Erro';if(r.type==='hour')return showHour(r.v);if(r.type==='date')return showDate(r.v);if(r.type==='month')return showMonth(r.v);return r.p?shown(r.v*100)+'%':shown(r.v)}
 function humanize(name){return name.replace(/([A-Z])/g,' $1').replace(/^./,c=>c.toUpperCase()).trim()}
-function expressionMode(s){if(/\b\d{1,2}\/\d{1,2}\/\d{2,4}\b/.test(s))return'date';let ids=String(s).match(/[A-Za-z][A-Za-z0-9]*/g)||[];for(const name of ids)if(engine.vars.has(name)){try{if(engine.calc(name).type==='date')return'date'}catch(_){}}return'number'}
-function inline(s){let parts=[];
-  // 1) "{{ expr }}" e "[ expr ]" — calcula números, horas e datas
-  let marked=String(s).replace(/{{\s*([^{}]+?)\s*}}|\[\s*([^\[\]]+?)\s*\]/g,(_,e1,e2)=>{let e=e1!==undefined?e1:e2;if(!e.trim())return e1!==undefined?'{{ }}':'[ ]';let key='\uE000'+parts.length+'\uE001';try{let r=engine.inline(e.trim(),expressionMode(e.trim()));parts.push('<span class="calc">'+esc(result(r))+'</span>')}catch(x){parts.push('<span class="calc-error" title="'+esc(x.message)+'">Erro: '+esc(x.message)+'</span>')}return key});
-  // 2) 'texto' ou "texto" — protege o conteúdo de virar referência @nome
+
+function inline(s){
+  let parts=[];
+  // 1) "{{ expr }}" e "[ expr ]" — calcula números, horas e datas;
+  let marked=String(s).replace(/{{\s*([^{}]+?)\s*}}|\[\s*([^\[\]]+?)\s*\]/g,(_,e1,e2)=>{
+    let e=e1!==undefined?e1:e2;
+    if(!e.trim())return e1!==undefined?'{{ }}':'[ ]';
+    let key='\uE000'+parts.length+'\uE001';
+    let decl=e.trim().match(/^@([A-Za-z][A-Za-z0-9]*)\s*=/); // Suporta declaração em ambos
+    
+    if(decl){
+      let name=decl[1];
+      try{let r=engine.calc(name);parts.push('<span class="calc calc-input">'+esc(humanize(name))+': '+esc(result(r))+'</span>')}
+      catch(x){parts.push('<span class="calc-error" title="'+esc(x.message)+'">Erro: '+esc(x.message)+'</span>')}
+      return key;
+    }
+    try{let r=engine.inline(e.trim());parts.push('<span class="calc">'+esc(result(r))+'</span>')}
+    catch(x){parts.push('<span class="calc-error" title="'+esc(x.message)+'">Erro: '+esc(x.message)+'</span>')}
+    return key;
+  });
+  // 2) 'texto' ou "texto"
   marked=marked.replace(/(['"])([^'"]*)\1/g,(_,q,inner)=>{let key='\uE002'+parts.length+'\uE003';parts.push(q+esc(inner)+q);return key});
-  // 3) "@nome" — nova sintaxe: só substitui se "nome" for uma variável já declarada
-  marked=marked.replace(/@([A-Za-z][A-Za-z0-9]*)/g,(m,name)=>{if(!engine.vars.has(name))return m;let key='\uE000'+parts.length+'\uE001';try{let r=engine.calc(name);parts.push('<span class="calc'+(engine.vars.get(name).kind==='input'?' calc-input':'')+'">'+esc(result(r))+'</span>')}catch(x){parts.push('<span class="calc-error" title="'+esc(x.message)+'">Erro: '+esc(x.message)+'</span>')}return key});
-  let h=esc(marked).replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>').replace(/__([^_]+)__/g,'<b>$1</b>').replace(/\*([^*]+)\*/g,'<i>$1</i>').replace(/\uE000(\d+)\uE001/g,(_,i)=>parts[+i]).replace(/\uE002(\d+)\uE003/g,(_,i)=>parts[+i]);return h}
-function table(lines,i){let cells=s=>s.trim().replace(/^\||\|$/g,'').split('|').map(x=>x.trim()),head=cells(lines[i]),align=cells(lines[i+1]),rows=[],j=i+2;while(j<lines.length&&lines[j].trim()&&lines[j].includes('|')){rows.push(cells(lines[j++]));}let h='<table><thead><tr>'+head.map((x,k)=>'<th'+(align[k]?.endsWith(':')?' style="text-align:right"':'')+'>'+inline(x)+'</th>').join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+head.map((_,k)=>'<td'+(align[k]?.endsWith(':')?' style="text-align:right"':'')+'>'+inline(r[k]||'')+'</td>').join('')+'</tr>').join('')+'</tbody></table>';return[h,j]}
-function markdown(lines){let out=[],p=[],fieldGroup=null,fieldGroupNext=-1,
+  // 3) "@nome"
+  marked=marked.replace(/@([A-Za-z][A-Za-z0-9]*)/g,(m,name)=>{
+    if(!engine.vars.has(name))return m;
+    let key='\uE000'+parts.length+'\uE001';
+    try{let r=engine.calc(name);parts.push('<span class="calc'+(engine.vars.get(name).kind==='input'?' calc-input':'')+'">'+esc(result(r))+'</span>')}
+    catch(x){parts.push('<span class="calc-error" title="'+esc(x.message)+'">Erro: '+esc(x.message)+'</span>')}
+    return key;
+  });
+  
+  let h=esc(marked).replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>').replace(/__([^_]+)__/g,'<b>$1</b>').replace(/\*([^*]+)\*/g,'<i>$1</i>').replace(/\uE000(\d+)\uE001/g,(_,i)=>parts[+i]).replace(/\uE002(\d+)\uE003/g,(_,i)=>parts[+i]);
+  return h;
+}
+
+function table(lines,i){
+  let cells=s=>s.trim().replace(/^\||\|$/g,'').split('|').map(x=>x.trim()),
+  head=cells(lines[i]), align=cells(lines[i+1]), rows=[], j=i+2;
+  while(j<lines.length&&lines[j].trim()&&lines[j].includes('|')){rows.push(cells(lines[j++]));}
+  let h='<table><thead><tr>'+head.map((x,k)=>'<th'+(align[k]?.endsWith(':')?' style="text-align:right"':'')+'>'+inline(x)+'</th>').join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+head.map((_,k)=>'<td'+(align[k]?.endsWith(':')?' style="text-align:right"':'')+'>'+inline(r[k]||'')+'</td>').join('')+'</tr>').join('')+'</tbody></table>';
+  return[h,j];
+}
+
+function markdown(lines){
+  let out=[],p=[],fieldGroup=null,fieldGroupNext=-1,
   flush=()=>{if(p.length){out.push('<p>'+inline(p.join('\n')).replace(/\n/g,'<br>')+'</p>');p=[]}},
   closeFields=()=>{if(fieldGroup){out.push('<div class="dp-fields">'+fieldGroup.join('')+'</div>');fieldGroup=null}};
-  for(let i=0;i<lines.length;){let l=lines[i],s=l.trim();if(!s){closeFields();flush();i++;continue}
-  // declaração visível "@/:/# nome = expr" -> vira linha de dado/cálculo no documento;
-  // linhas seguidas (sem linha em branco entre elas) são agrupadas num único bloco
-  let decl=l.match(/^\s*([@:#])\s*([A-Za-z][A-Za-z0-9]*)\s*=/);
-  if(decl){let v=engine.vars.get(decl[2]);if(v&&v.visible&&v.line===i+1){flush();if(fieldGroupNext!==i)closeFields();if(!fieldGroup)fieldGroup=[];let r=engine.value(v.name),bad=!r||r.error;fieldGroup.push('<div class="dp-field'+(v.kind==='calc'?' dp-field-calc':' dp-field-input')+(bad?' dp-field-error':'')+'"><span class="dp-field-label">'+esc(humanize(v.name))+'</span><span class="dp-field-value">'+esc(bad?(r&&r.error||'Erro'):result(r))+'</span></div>');fieldGroupNext=i+1;i++;continue}}
-  closeFields();
-  if(/^```/.test(s)){flush();let c=[];i++;while(i<lines.length&&!/^```/.test(lines[i].trim()))c.push(lines[i++]);if(i<lines.length)i++;out.push('<pre><code>'+esc(c.join('\n'))+'</code></pre>');continue}let hd=l.match(/^\s*(#{1,6})\s+(.+)$/);if(hd){flush();out.push('<h'+hd[1].length+'>'+inline(hd[2])+'</h'+hd[1].length+'>');i++;continue}if(l.includes('|')&&i+1<lines.length&&/^\s*\|?\s*:?-{3,}:?(?:\s*\|\s*:?-{3,}:?)+\s*\|?\s*$/.test(lines[i+1])){flush();let t=table(lines,i);out.push(t[0]);i=t[1];continue}if(/^\s*[-*+]\s+/.test(l)){flush();let a=[];while(i<lines.length&&/^\s*[-*+]\s+/.test(lines[i]))a.push('<li>'+inline(lines[i++].replace(/^\s*[-*+]\s+/,''))+'</li>');out.push('<ul>'+a.join('')+'</ul>');continue}if(/^\s*>/.test(l)){flush();let a=[];while(i<lines.length&&/^\s*>/.test(lines[i]))a.push(lines[i++].replace(/^\s*>\s?/,''));out.push('<blockquote>'+inline(a.join('\n'))+'</blockquote>');continue}p.push(l);i++}closeFields();flush();return out.join('\n')}
-function renderVars(){let a=[...engine.vars.values()];varsList.innerHTML=a.length?a.map(v=>{let r=engine.value(v.name),bad=!r||r.error;return'<div class="var"><div class="var-name">'+esc(v.name)+'</div><div class="var-expr">= '+esc(v.expr)+' · linha '+v.line+'</div><div class="var-value'+(bad?' bad':'')+'">'+esc(bad?(r?.error||'Erro'):result(r))+'</div></div>'}).join(''):'<div class="vars-empty">Nenhuma variável válida.</div>'}
-function render(text){let lines=engine.load(text),body=markdown(lines),errors=engine.issues.length?'<div class="errors"><strong>Verifique os cálculos:</strong><ul>'+engine.issues.map(x=>'<li>Linha '+x.line+': '+esc(x.msg)+'</li>').join('')+'</ul></div>':'';preview.innerHTML=errors+(body||'<div class="empty">Digite um documento para começar.</div>');$('vcount').textContent=engine.vars.size+(engine.vars.size===1?' variável':' variáveis');$('ecount').textContent=engine.issues.length+(engine.issues.length===1?' erro':' erros');$('ecount').classList.toggle('error',!!engine.issues.length);renderVars();if(!picker.hidden)renderPicker()}
+  
+  for(let i=0;i<lines.length;){
+    let l=lines[i],s=l.trim();
+    if(!s){closeFields();flush();i++;continue}
+    let decl=l.match(/^\s*([@:#])\s*([A-Za-z][A-Za-z0-9]*)\s*=/);
+    if(decl){
+      let v=engine.vars.get(decl[2]);
+      if(v&&v.visible&&v.line===i+1){
+        flush();
+        if(fieldGroupNext!==i)closeFields();
+        if(!fieldGroup)fieldGroup=[];
+        let r=engine.value(v.name), bad=!r||r.error;
+        fieldGroup.push('<div class="dp-field'+(v.kind==='calc'?' dp-field-calc':' dp-field-input')+(bad?' dp-field-error':'')+'"><span class="dp-field-label">'+esc(humanize(v.name))+'</span><span class="dp-field-value">'+esc(bad?(r&&r.error||'Erro'):result(r))+'</span></div>');
+        fieldGroupNext=i+1;i++;continue;
+      }
+    }
+    closeFields();
+    if(/^```/.test(s)){flush();let c=[];i++;while(i<lines.length&&!/^```/.test(lines[i].trim()))c.push(lines[i++]);if(i<lines.length)i++;out.push('<pre><code>'+esc(c.join('\n'))+'</code></pre>');continue}
+    let hd=l.match(/^\s*(#{1,6})\s+(.+)$/);
+    if(hd){flush();out.push('<h'+hd[1].length+'>'+inline(hd[2])+'</h'+hd[1].length+'>');i++;continue}
+    if(l.includes('|')&&i+1<lines.length&&/^\s*\|?\s*:?-{3,}:?(?:\s*\|\s*:?-{3,}:?)+\s*\|?\s*$/.test(lines[i+1])){flush();let t=table(lines,i);out.push(t[0]);i=t[1];continue}
+    if(/^\s*[-*+]\s+/.test(l)){flush();let a=[];while(i<lines.length&&/^\s*[-*+]\s+/.test(lines[i]))a.push('<li>'+inline(lines[i++].replace(/^\s*[-*+]\s+/,''))+'</li>');out.push('<ul>'+a.join('')+'</ul>');continue}
+    if(/^\s*>/.test(l)){flush();let a=[];while(i<lines.length&&/^\s*>/.test(lines[i]))a.push(lines[i++].replace(/^\s*>\s?/,''));out.push('<blockquote>'+inline(a.join('\n'))+'</blockquote>');continue}
+    p.push(l);i++;
+  }
+  closeFields();flush();
+  return out.join('\n');
+}
+
+function renderVars(){
+  let a=[...engine.vars.values()];
+  varsList.innerHTML=a.length?a.map(v=>{
+    let r=engine.value(v.name), bad=!r||r.error;
+    return'<div class="var"><div class="var-name">'+esc(v.name)+'</div><div class="var-expr">= '+esc(v.expr)+' · linha '+v.line+'</div><div class="var-value'+(bad?' bad':'')+'">'+esc(bad?(r?.error||'Erro'):result(r))+'</div></div>';
+  }).join(''):'<div class="vars-empty">Nenhuma variável válida.</div>';
+}
+
+function render(text){
+  let lines=engine.load(text), body=markdown(lines),
+  errors=engine.issues.length?'<div class="errors"><strong>Verifique os cálculos:</strong><ul>'+engine.issues.map(x=>'<li>Linha '+x.line+': '+esc(x.msg)+'</li>').join('')+'</ul></div>':'';
+  preview.innerHTML=errors+(body||'<div class="empty">Digite um documento para começar.</div>');
+  $('vcount').textContent=engine.vars.size+(engine.vars.size===1?' variável':' variáveis');
+  $('ecount').textContent=engine.issues.length+(engine.issues.length===1?' erro':' erros');
+  $('ecount').classList.toggle('error',!!engine.issues.length);
+  renderVars();
+  if(!picker.hidden)renderPicker();
+}
+
 // ===================================================================
-// Autocomplete (Ctrl+Espaço): token() acha o prefixo digitado antes do
-// cursor, caret() posiciona o painel na coordenada real do texto.
+// Autocomplete
 // ===================================================================
 function token(){let m=input.value.slice(0,input.selectionStart).match(/[A-Za-z][A-Za-z0-9]*$/);return{start:m?input.selectionStart-m[0].length:input.selectionStart,filter:(m?.[0]||'').toLowerCase()}}
-function caret(){let m=document.createElement('div'),style=getComputedStyle(input);m.style.cssText='position:absolute;visibility:hidden;white-space:pre-wrap;overflow-wrap:break-word;width:'+input.clientWidth+'px;font:'+style.font+';line-height:'+style.lineHeight+';padding:'+style.padding+';border:'+style.border+';';m.textContent=input.value.slice(0,input.selectionStart);let s=document.createElement('span');s.textContent='\u200b';m.append(s);document.body.append(m);let a=input.getBoundingClientRect(),b=m.getBoundingClientRect(),c=s.getBoundingClientRect(),p=$('editorPane').getBoundingClientRect();picker.style.left=Math.max(8,a.left+c.left-b.left-p.left)+'px';picker.style.top=Math.max(8,a.top+c.top-b.top-p.top+22)+'px';m.remove()}
-function renderPicker(){let t=token(),a=[...engine.vars.values()].filter(v=>v.name.toLowerCase().includes(t.filter));pickerList.innerHTML=a.length?a.map((v,i)=>'<button class="picker-item'+(i===0?' selected':'')+'" data-name="'+esc(v.name)+'"><span class="picker-name">'+esc(v.name)+'</span><span class="picker-value">'+esc(result(engine.value(v.name)))+'</span></button>').join(''):'<div class="picker-empty">Nenhuma variável encontrada.</div>';picker._items=a;picker._index=Math.min(picker._index||0,Math.max(0,a.length-1));picker.querySelectorAll('.picker-item').forEach((b,i)=>b.addEventListener('mousedown',e=>{e.preventDefault();insert(i)}));caret()}
+function caret(){
+  let m=document.createElement('div'),style=getComputedStyle(input);
+  m.style.cssText='position:absolute;visibility:hidden;white-space:pre-wrap;overflow-wrap:break-word;width:'+input.clientWidth+'px;font:'+style.font+';line-height:'+style.lineHeight+';padding:'+style.padding+';border:'+style.border+';';
+  m.textContent=input.value.slice(0,input.selectionStart);
+  let s=document.createElement('span');s.textContent='\u200b';m.append(s);
+  document.body.append(m);
+  let a=input.getBoundingClientRect(),b=m.getBoundingClientRect(),c=s.getBoundingClientRect(),p=$('editorPane').getBoundingClientRect();
+  picker.style.left=Math.max(8,a.left+c.left-b.left-p.left)+'px';
+  picker.style.top=Math.max(8,a.top+c.top-b.top-p.top+22)+'px';
+  m.remove();
+}
+function renderPicker(){
+  let t=token(),a=[...engine.vars.values()].filter(v=>v.name.toLowerCase().includes(t.filter));
+  pickerList.innerHTML=a.length?a.map((v,i)=>'<button class="picker-item'+(i===0?' selected':'')+'" data-name="'+esc(v.name)+'"><span class="picker-name">'+esc(v.name)+'</span><span class="picker-value">'+esc(result(engine.value(v.name)))+'</span></button>').join(''):'<div class="picker-empty">Nenhuma variável encontrada.</div>';
+  picker._items=a;picker._index=Math.min(picker._index||0,Math.max(0,a.length-1));
+  picker.querySelectorAll('.picker-item').forEach((b,i)=>b.addEventListener('mousedown',e=>{e.preventDefault();insert(i)}));
+  caret();
+}
 function openPicker(){picker.hidden=false;picker._index=0;renderPicker()}
 function closePicker(){picker.hidden=true;picker._items=[];pickerPrefix=''}
 function insert(i){let v=picker._items?.[i];if(!v)return;let t=token();input.setRangeText(pickerPrefix+v.name,t.start,input.selectionStart,'end');closePicker();input.focus();render(input.value)}
+
 // ===================================================================
-// Melhorias de digitação: formatação rápida, duplicar/mover linha,
-// fechamento automático de ( [ { " ' `, tabela rápida (|3x5 e Ctrl+Alt+T)
-// e Tab para nova linha na última célula de uma tabela.
+// Atalhos e Edição
 // ===================================================================
 function lineInfo(){let pos=input.selectionStart,val=input.value,ls=val.lastIndexOf('\n',pos-1)+1,le=val.indexOf('\n',pos);if(le===-1)le=val.length;return{val,pos,ls,le,line:val.slice(ls,le)}}
 function wrapMark(mark){let s=input.selectionStart,e=input.selectionEnd,sel=input.value.slice(s,e);input.setRangeText(mark+sel+mark,s,e,'end');if(sel){input.selectionStart=s+mark.length;input.selectionEnd=s+mark.length+sel.length}else{input.selectionStart=input.selectionEnd=s+mark.length}render(input.value)}
 function duplicateLine(){let{val,pos,ls,le,line}=lineInfo();input.setRangeText(line+'\n'+line,ls,le,'end');input.selectionStart=input.selectionEnd=le+1+(pos-ls);render(input.value)}
 function moveLine(dir){let{val,pos,ls,le,line:cur}=lineInfo();if(dir===-1){if(ls===0)return;let ps=val.lastIndexOf('\n',ls-2)+1,prev=val.slice(ps,ls-1);input.setRangeText(cur+'\n'+prev,ps,le,'end');input.selectionStart=input.selectionEnd=ps+(pos-ls)}else{if(le===val.length)return;let ne=val.indexOf('\n',le+1);if(ne===-1)ne=val.length;let next=val.slice(le+1,ne);input.setRangeText(next+'\n'+cur,ls,ne,'end');input.selectionStart=input.selectionEnd=ls+next.length+1+(pos-ls)}render(input.value)}
-// Monta o esqueleto de uma tabela markdown: "cols" colunas, "rows" linhas no total (cabeçalho + dados)
 function tableSkeleton(cols,rows){cols=Math.max(1,cols);rows=Math.max(2,rows);let head='| '+Array.from({length:cols},(_,i)=>'Coluna '+(i+1)).join(' | ')+' |',sep='|'+Array.from({length:cols},()=>' --- ').join('|')+'|',row='| '+Array.from({length:cols},()=>' ').join(' | ')+' |',body=Array.from({length:rows-1},()=>row).join('\n');return head+'\n'+sep+'\n'+body}
 function insertTable(cols,rows,start,end){let t=tableSkeleton(cols,rows);input.setRangeText(t,start,end,'end');input.selectionStart=input.selectionEnd=start+t.indexOf('\n',t.indexOf('\n')+1)+3;render(input.value)}
-function handleTab(shift){let{val,pos,ls,le,line}=lineInfo();
-  // dentro de lista (-, *, +, 1.): Tab indenta, Shift+Tab desindenta
-  if(/^\s*([-*+]|\d+\.)\s+/.test(line)){if(shift){let rm=line.match(/^ {1,2}/);if(!rm)return true;input.setRangeText('',ls,ls+rm[0].length,'end');input.selectionStart=input.selectionEnd=Math.max(ls,pos-rm[0].length)}else{input.setRangeText('  ',ls,ls,'end');input.selectionStart=input.selectionEnd=pos+2}render(input.value);return true}
-  // última célula da última linha de uma tabela: Tab cria uma nova linha, como no Word/Excel
-  if(!shift&&/^\s*\|.*\|\s*$/.test(line)&&!/^\s*\|?\s*:?-{3,}/.test(line)){let nextEnd=val.indexOf('\n',le+1);if(nextEnd===-1)nextEnd=val.length;let nextLine=val.slice(le+1,nextEnd),isLastRow=!/^\s*\|/.test(nextLine),pipes=[...line.matchAll(/\|/g)].map(x=>x.index),inLastCell=pipes.length>=2&&(pos-ls)>=pipes[pipes.length-2];if(isLastRow&&inLastCell){let cols=pipes.length-1,row='| '+Array.from({length:cols},()=>' ').join(' | ')+' |';input.setRangeText('\n'+row,le,le,'end');input.selectionStart=input.selectionEnd=le+3;render(input.value);return true}}
-  return false}
+function handleTab(shift){let{val,pos,ls,le,line}=lineInfo();if(/^\s*([-*+]|\d+\.)\s+/.test(line)){if(shift){let rm=line.match(/^ {1,2}/);if(!rm)return true;input.setRangeText('',ls,ls+rm[0].length,'end');input.selectionStart=input.selectionEnd=Math.max(ls,pos-rm[0].length)}else{input.setRangeText('  ',ls,ls,'end');input.selectionStart=input.selectionEnd=pos+2}render(input.value);return true}if(!shift&&/^\s*\|.*\|\s*$/.test(line)&&!/^\s*\|?\s*:?-{3,}/.test(line)){let nextEnd=val.indexOf('\n',le+1);if(nextEnd===-1)nextEnd=val.length;let nextLine=val.slice(le+1,nextEnd),isLastRow=!/^\s*\|/.test(nextLine),pipes=[...line.matchAll(/\|/g)].map(x=>x.index),inLastCell=pipes.length>=2&&(pos-ls)>=pipes[pipes.length-2];if(isLastRow&&inLastCell){let cols=pipes.length-1,row='| '+Array.from({length:cols},()=>' ').join(' | ')+' |';input.setRangeText('\n'+row,le,le,'end');input.selectionStart=input.selectionEnd=le+3;render(input.value);return true}}return false}
 function tryQuickTable(){if(!picker.hidden)return false;let{ls,le,line}=lineInfo(),m=line.trim().match(/^\|?\s*(\d{1,2})\s*[xX]\s*(\d{1,2})\s*\|?$/);if(!m)return false;let cols=Math.min(12,+m[1]),rows=Math.min(50,+m[2]);if(!cols||!rows)return false;insertTable(cols,rows,ls,le);return true}
-// Fechamento automático de pares — insere par vazio (ou envolve a seleção) e "atravessa" o
-// fechamento já existente em vez de duplicá-lo (comportamento padrão de editores de código)
 const AUTOCLOSE={'(':')','[':']','{':'}','"':'"',"'":"'",'`':'`'};
-function handleAutoclose(e){let key=e.key,s=input.selectionStart,e2=input.selectionEnd,val=input.value;
-  if(AUTOCLOSE[key]!==undefined){
-    if(s===e2&&(key==='"'||key==="'"||key==='`')&&val[s]===key){e.preventDefault();input.selectionStart=input.selectionEnd=s+1;return true}
-    if(s!==e2){let sel=val.slice(s,e2);e.preventDefault();input.setRangeText(key+sel+AUTOCLOSE[key],s,e2,'end');input.selectionStart=s+1;input.selectionEnd=s+1+sel.length;render(input.value);return true}
-    e.preventDefault();input.setRangeText(key+AUTOCLOSE[key],s,s,'end');input.selectionStart=input.selectionEnd=s+1;render(input.value);return true}
-  let closers={')':'(',']':'[','}':'{'};
-  if(closers[key]!==undefined&&s===e2&&val[s]===key){e.preventDefault();input.selectionStart=input.selectionEnd=s+1;return true}
-  return false}
-// Exporta o conteúdo do editor como arquivo .md
+function handleAutoclose(e){let key=e.key,s=input.selectionStart,e2=input.selectionEnd,val=input.value;if(AUTOCLOSE[key]!==undefined){if(s===e2&&(key==='"'||key==="'"||key==='`')&&val[s]===key){e.preventDefault();input.selectionStart=input.selectionEnd=s+1;return true}if(s!==e2){let sel=val.slice(s,e2);e.preventDefault();input.setRangeText(key+sel+AUTOCLOSE[key],s,e2,'end');input.selectionStart=s+1;input.selectionEnd=s+1+sel.length;render(input.value);return true}e.preventDefault();input.setRangeText(key+AUTOCLOSE[key],s,s,'end');input.selectionStart=input.selectionEnd=s+1;render(input.value);return true}let closers={')':'(',']':'[','}':'{'};if(closers[key]!==undefined&&s===e2&&val[s]===key){e.preventDefault();input.selectionStart=input.selectionEnd=s+1;return true}return false}
 function save(){let a=document.createElement('a'),url=URL.createObjectURL(new Blob([input.value],{type:'text/markdown;charset=utf-8'}));a.href=url;a.download='documento-dpcalc.md';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),0);toast.textContent='Documento salvo como documento-dpcalc.md.';toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2600)}
-// Abre o seletor sozinho ao digitar "@" (referência) ou "=" (declaração/expressão);
-// continua filtrando enquanto o nome é digitado ou apagado, e fecha quando o
-// caractere digitado não pode mais fazer parte de um nome de variável.
-input.addEventListener('input',e=>{render(input.value);let d=e.data;
+
+input.addEventListener('input',e=>{
+  render(input.value);
+  let d=e.data;
   if(d==='='){pickerPrefix='';openPicker();return}
   if(picker.hidden)return;
   if(e.inputType==='deleteContentBackward'||e.inputType==='deleteContentForward')return;
   if(d&&/[A-Za-z0-9]/.test(d))return;
-  closePicker()});
-input.addEventListener('keydown',e=>{let cmd=e.ctrlKey||e.metaKey;
-  // formatação e edição de linha
+  closePicker();
+});
+
+input.addEventListener('keydown',e=>{
+  let cmd=e.ctrlKey||e.metaKey;
   if(cmd&&!e.altKey&&!e.shiftKey&&e.code==='KeyB'){e.preventDefault();wrapMark('**');return}
   if(cmd&&!e.altKey&&!e.shiftKey&&e.code==='KeyI'){e.preventDefault();wrapMark('*');return}
   if(cmd&&!e.altKey&&e.key==='`'){e.preventDefault();wrapMark('`');return}
   if(cmd&&!e.altKey&&!e.shiftKey&&e.code==='KeyD'){e.preventDefault();duplicateLine();return}
   if(e.altKey&&(e.code==='ArrowUp'||e.code==='ArrowDown')){e.preventDefault();moveLine(e.code==='ArrowUp'?-1:1);return}
-  // tabela rápida por atalho de tecla
   if(cmd&&e.altKey&&e.code==='KeyT'){e.preventDefault();let a=prompt('Tabela: colunas x linhas (ex.: 3x5)','3x3');if(a){let m=a.trim().match(/^(\d{1,2})\s*[xX]\s*(\d{1,2})$/);if(m){let{ls,le}=lineInfo();insertTable(Math.min(12,+m[1]),Math.min(50,+m[2]),ls,le)}else alert('Formato inválido. Use, por exemplo, 3x5.')}return}
   if(cmd&&e.code==='Space'){e.preventDefault();pickerPrefix='';openPicker();return}
   if(cmd&&e.code==='KeyS'){e.preventDefault();save();return}
   if(cmd&&e.code==='KeyP'){e.preventDefault();print();return}
   if(e.key==='F2'){e.preventDefault();vars.hidden=!vars.hidden;if(!vars.hidden)renderVars();return}
-  // "@" abre o seletor sem inserir o caractere — só vira texto se uma variável for escolhida;
-  // se cancelado (Esc), não sobra "@" solto no documento
   if(!cmd&&!e.altKey&&e.key==='@'&&picker.hidden&&input.selectionStart===input.selectionEnd){e.preventDefault();pickerPrefix='@';openPicker();return}
-  // "|3x5" + Enter numa linha em branco monta o esqueleto da tabela
   if(e.key==='Enter'&&picker.hidden&&tryQuickTable()){e.preventDefault();return}
   if(e.key==='Tab'){e.preventDefault();if(handleTab(e.shiftKey))return;if(e.shiftKey){let{ls,line}=lineInfo(),rm=line.match(/^ {1,2}/);if(rm)input.setRangeText('',ls,ls+rm[0].length,'end')}else input.setRangeText('  ',input.selectionStart,input.selectionEnd,'end');render(input.value);return}
   if(!cmd&&!e.altKey&&handleAutoclose(e))return;
   if(picker.hidden)return;
   if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();let n=picker._items.length;picker._index=(picker._index+(e.key==='ArrowDown'?1:-1)+n)%n;picker.querySelectorAll('.picker-item').forEach((x,i)=>x.classList.toggle('selected',i===picker._index));return}
   if(e.key==='Enter'){e.preventDefault();insert(picker._index)}
-  if(e.key==='Escape'){e.preventDefault();closePicker()}});input.addEventListener('blur',()=>setTimeout(()=>{if(!picker.matches(':hover'))closePicker()},150));$('varsBtn').onclick=()=>{vars.hidden=!vars.hidden;if(!vars.hidden)renderVars()};$('closeVars').onclick=()=>vars.hidden=true;$('saveBtn').onclick=save;$('printBtn').onclick=()=>print();$('helpBtn').onclick=()=>{let d=$('help');d.showModal?d.showModal():d.setAttribute('open','')};$('closeHelp').onclick=()=>$('help').close?.();window.addEventListener('resize',()=>{if(!picker.hidden)caret()});
-// Scroll sincronizado: acompanha por proporção (o conteúdo de cada lado tem altura diferente)
-(function(){let previewPane=$('previewPane'),sync=null,ratio=el=>{let d=el.scrollHeight-el.clientHeight;return d>0?el.scrollTop/d:0},apply=(el,r)=>{let d=el.scrollHeight-el.clientHeight;if(d>0)el.scrollTop=r*d};
+  if(e.key==='Escape'){e.preventDefault();closePicker()}
+});
+
+input.addEventListener('blur',()=>setTimeout(()=>{if(!picker.matches(':hover'))closePicker()},150));
+ $('varsBtn').onclick=()=>{vars.hidden=!vars.hidden;if(!vars.hidden)renderVars()};
+ $('closeVars').onclick=()=>vars.hidden=true;
+ $('saveBtn').onclick=save;
+ $('printBtn').onclick=()=>print();
+ $('helpBtn').onclick=()=>{let d=$('help');d.showModal?d.showModal():d.setAttribute('open','')};
+ $('closeHelp').onclick=()=>$('help').close?.();
+window.addEventListener('resize',()=>{if(!picker.hidden)caret()});
+
+(function(){
+  let previewPane=$('previewPane'),sync=null,ratio=el=>{let d=el.scrollHeight-el.clientHeight;return d>0?el.scrollTop/d:0},apply=(el,r)=>{let d=el.scrollHeight-el.clientHeight;if(d>0)el.scrollTop=r*d};
   input.addEventListener('scroll',()=>{if(sync)return;sync='input';apply(previewPane,ratio(input));requestAnimationFrame(()=>sync=null)});
   previewPane.addEventListener('scroll',()=>{if(sync)return;sync='preview';apply(input,ratio(previewPane));requestAnimationFrame(()=>sync=null)});
 })();
+
 render(input.value);
 </script>
 </body>
